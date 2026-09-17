@@ -1,0 +1,9 @@
+﻿## Interface: 120100
+## Title: |cff25d366Wisp|r|cffffffffApp|r
+## Notes: WhatsApp-style interface for whispers (susurros). /wispchat to toggle.
+## Author: WispChat
+## Version: 1.0.0
+## DefaultState: enabled
+## SavedVariables: WispChatDB
+
+WispChat.lua

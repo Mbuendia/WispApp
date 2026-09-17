@@ -1,0 +1,11 @@
+﻿{
+  "recommendations": [
+    "sumneko.lua",
+    "Ketho.vscode-wow-api",
+    "stanzilla.vscode-wow-toc",
+    "esbenp.prettier-vscode",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-spanish"
+  ]
+}
