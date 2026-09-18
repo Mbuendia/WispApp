@@ -18,10 +18,14 @@ eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventFrame:RegisterEvent("CHAT_MSG_AFK")
 eventFrame:RegisterEvent("CHAT_MSG_DND")
 
+-- v1.6: P2P
+eventFrame:RegisterEvent("CHAT_MSG_ADDON")
+
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local name = ...
         if name == "WispCraft" then
+            C_ChatInfo.RegisterAddonMessagePrefix("WISPCRAFT")
             if ns.initSettings then ns.initSettings() end
             if ns.initTemplates then ns.initTemplates() end
             ns.buildUI()
@@ -38,6 +42,38 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             print("|cff25d366WispCraft v1.2|r loaded. Type /wc to open.")
         end
 
+    elseif event == "CHAT_MSG_ADDON" then
+        local prefix, msg, channel, sender = ...
+        if prefix == "WISPCRAFT" and channel == "WHISPER" then
+            local name = ns.stripRealm(sender)
+            if msg == "HELLO" then
+                ns.wispPeers[name] = true
+                if ns.active and ns.contacts[ns.active] == name then
+                    if ns.selectContact then ns.selectContact(ns.active) end
+                end
+            elseif msg == "TYPING" then
+                ns.isTyping[name] = true
+                if ns.active and ns.contacts[ns.active] == name then
+                    ns.hdrStatus:SetText("escribiendo...")
+                    ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561)
+                end
+            elseif msg == "STOPPED" then
+                ns.isTyping[name] = nil
+                if ns.active and ns.contacts[ns.active] == name then
+                    if ns.selectContact then ns.selectContact(ns.active) end
+                end
+            elseif msg == "READ" then
+                if ns.convos[name] then
+                    for _, m in ipairs(ns.convos[name]) do
+                        if m.out then m.read = true end
+                    end
+                    if ns.active and ns.contacts[ns.active] == name then
+                        if ns.renderChat then ns.renderChat() end
+                    end
+                end
+            end
+        end
+
     elseif event == "CHAT_MSG_WHISPER" then
         local msg, sender = ...
         local name = ns.stripRealm(sender)
@@ -45,13 +81,17 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
         -- Play standard whisper sound
         local muted = WispCraftDB.muted and WispCraftDB.muted[name]
-        if not muted and WispCraftDB.settings and WispCraftDB.settings.playSounds then
-            PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
+        if not muted then
+            if ns.doShake then ns.doShake() end
+            if WispCraftDB.settings and WispCraftDB.settings.playSounds then
+                PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
+            end
         end
 
         -- Update UI if it's the active conversation
         if ns.active and ns.contacts[ns.active] == name then
             ns.unread[name] = 0 -- Mark read
+            if ns.sendP2P then ns.sendP2P(name, "READ") end
             if ns.renderChat then ns.renderChat() end
         end
         if ns.updateContactList then ns.updateContactList() end

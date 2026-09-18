@@ -10,6 +10,8 @@ function ns.initSettings()
         hideInCombat = false,
         playSounds   = true,
         startPeeked  = false,
+        playShake    = true,
+        enableP2P    = true,
     }
     WispCraftDB.notes = WispCraftDB.notes or {}
     WispCraftDB.muted = WispCraftDB.muted or {}
@@ -39,7 +41,7 @@ end
 
 local function buildConfigFrame()
     local f = CreateFrame("Frame", "WispCraftConfigFrame", UIParent, "BasicFrameTemplateWithInset")
-    f:SetSize(350, 350)
+    f:SetSize(350, 420)
     f:SetPoint("CENTER")
     f:SetMovable(true)
     f:EnableMouse(true)
@@ -54,10 +56,12 @@ local function buildConfigFrame()
     createCheckbox(f, "Auto-ocultar en combate", "hideInCombat", -40)
     createCheckbox(f, "Reproducir sonidos", "playSounds", -70)
     createCheckbox(f, "Iniciar en modo Peek", "startPeeked", -100)
+    createCheckbox(f, "Animar minimapa", "playShake", -130)
+    createCheckbox(f, "Habilitar P2P", "enableP2P", -160)
     
     -- Templates Section
     local tl = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    tl:SetPoint("TOPLEFT", 20, -140)
+    tl:SetPoint("TOPLEFT", 20, -190)
     tl:SetText("Plantillas de respuesta rápida (:: o /)")
 
     f.templateRows = {}
@@ -66,7 +70,7 @@ local function buildConfigFrame()
         local templates = ns.getTemplates()
         for _, row in ipairs(f.templateRows) do row:Hide() end
         
-        local y = -160
+        local y = -210
         for i, text in ipairs(templates) do
             local row = f.templateRows[i]
             if not row then

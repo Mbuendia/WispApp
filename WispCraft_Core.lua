@@ -207,9 +207,17 @@ function ns.ensureConvo(name)
     end
 end
 
+ns.wispPeers = {}
+ns.isTyping = {}
+
+function ns.sendP2P(target, action, payload)
+    if WispCraftDB.settings and not WispCraftDB.settings.enableP2P then return end
+    C_ChatInfo.SendAddonMessage("WISPCRAFT", action .. (payload and (":"..payload) or ""), "WHISPER", target)
+end
+
 function ns.pushMessage(contact, msg, isOut)
     ns.ensureConvo(contact)
-    table.insert(ns.convos[contact], {msg=msg, ts=ns.ts(), out=isOut})
+    table.insert(ns.convos[contact], {msg=msg, ts=ns.ts(), out=isOut, read=false})
     ns.promoteContact(contact)
     if contact ~= ns.active then
         local muted = WispCraftDB.muted and WispCraftDB.muted[contact]

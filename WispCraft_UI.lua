@@ -27,7 +27,8 @@ local function clearBubbles()
     for _, b in ipairs(ns.bubbles) do b:Hide() end
 end
 
-local function newBubble(text, tsStr, isOut, lastY)
+local function newBubble(m, lastY)
+    local text, tsStr, isOut, isRead = m.msg, m.ts, m.out, m.read
     local w = ns.measureW(text, ns.BMAX)
     local h = ns.measureH(text, w) + 18
 
@@ -52,7 +53,13 @@ local function newBubble(text, tsStr, isOut, lastY)
     local ts = b:CreateFontString(nil, "OVERLAY")
     ts:SetFont("Fonts\\FRIZQT__.TTF", 8)
     ts:SetPoint("BOTTOMRIGHT", -5, 3)
-    ts:SetText(tsStr); ts:SetTextColor(0.6,0.6,0.6)
+    if isOut then
+        local color = isRead and "ff53bdeb" or "ff25d366"
+        ts:SetText(tsStr .. " |c" .. color .. "✓✓|r")
+    else
+        ts:SetText(tsStr)
+    end
+    ts:SetTextColor(0.6,0.6,0.6)
 
     table.insert(ns.bubbles, b)
     return h
@@ -64,7 +71,7 @@ function ns.renderChat()
     local c = ns.convos[ns.contacts[ns.active]]
     local y = -10
     for _, m in ipairs(c) do
-        local bh = newBubble(m.msg, m.ts, m.out, y)
+        local bh = newBubble(m, y)
         y = y - bh - 6
     end
     ns.contentFrame:SetHeight(math.abs(y))
@@ -178,15 +185,26 @@ function ns.selectContact(idx)
     ns.headerName:SetText(name)
     
     local status = ns.contactStatus[name]
-    if status == "AFK" then
+    if ns.isTyping[name] then
+        ns.hdrStatus:SetText("escribiendo...")
+        ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
+    elseif status == "AFK" then
         ns.hdrStatus:SetText("🌙 AFK")
         ns.hdrStatus:SetTextColor(1, 0.55, 0) -- #ff8c00
     elseif status == "DND" then
         ns.hdrStatus:SetText("⛔ DND")
         ns.hdrStatus:SetTextColor(1, 0.26, 0.26) -- #ff4444
+    elseif ns.wispPeers[name] then
+        ns.hdrStatus:SetText("en línea")
+        ns.hdrStatus:SetTextColor(0.325, 0.741, 0.922) -- #53bdeb
+        if ns.sendP2P then
+            ns.sendP2P(name, "HELLO")
+            ns.sendP2P(name, "READ")
+        end
     else
         ns.hdrStatus:SetText("en línea")
         ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
+        if ns.sendP2P then ns.sendP2P(name, "HELLO") end
     end
     
     ns.hdrAvatarLetter:SetText(name:sub(1,1):upper())
@@ -537,6 +555,7 @@ function ns.buildUI()
         end
     end
 
+    ns.lastTypingState = false
     ns.inputBox:SetScript("OnTextChanged", function(self, userInput)
         if userInput then
             local text = self:GetText()
@@ -547,10 +566,31 @@ function ns.buildUI()
             elseif ns.quickReplyPopup then
                 ns.quickReplyPopup:Hide()
             end
+            
+            if ns.active and ns.sendP2P then
+                local target = ns.contacts[ns.active]
+                local isTyping = text:len() > 0
+                if isTyping ~= ns.lastTypingState then
+                    ns.lastTypingState = isTyping
+                    ns.sendP2P(target, isTyping and "TYPING" or "STOPPED")
+                end
+            end
         end
     end)
 
     ns.sendBtn:SetScript("OnClick", doSend)
     ns.inputBox:SetScript("OnEnterPressed", doSend)
     ns.inputBox:SetScript("OnEscapePressed", function() ns.inputBox:ClearFocus() end)
+end
+
+local oldSetPeekMode = ns.setPeekMode
+function ns.setPeekMode(enable)
+    if WispCraftDB.settings and WispCraftDB.settings.playSounds then
+        if enable then
+            PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_CLOSE or 850)
+        else
+            PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN or 850)
+        end
+    end
+    oldSetPeekMode(enable)
 end
