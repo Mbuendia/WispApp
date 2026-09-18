@@ -1,8 +1,8 @@
-local ADDON_NAME, ns = ...
+﻿local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft UI — Main Window, Sidebar, Bubbles & Peek (v1.1)
---  WoW Forever / Midnight · Build 12.1.0 (120100)
+--  WispCraft UI â€” Main Window, Sidebar, Bubbles & Peek (v1.1)
+--  WoW Forever / Midnight Â· Build 12.1.0 (120100)
 -- ============================================================
 
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ local function newBubble(m, lastY)
     ts:SetPoint("BOTTOMRIGHT", -5, 3)
     if isOut then
         local color = isRead and "ff53bdeb" or "ff25d366"
-        ts:SetText(tsStr .. " |c" .. color .. "✓✓|r")
+        ts:SetText(tsStr .. " |c" .. color .. "âœ“âœ“|r")
     else
         ts:SetText(tsStr)
     end
@@ -68,7 +68,7 @@ end
 function ns.renderChat()
     clearBubbles()
     if not ns.active then return end
-    local c = ns.convos[ns.contacts[ns.active]]
+    local c = ns.convos[ns.active]
     local y = -10
     for _, m in ipairs(c) do
         local bh = newBubble(m, y)
@@ -90,7 +90,7 @@ local function buildContactRow(idx)
 
     local bg = ns.BG(r, ns.C.sidebar)
     r:SetScript("OnEnter", function() bg:SetColorTexture(ns.U(ns.C.sidHov)) end)
-    r:SetScript("OnLeave", function() bg:SetColorTexture(ns.U(ns.active==idx and ns.C.sidSel or ns.C.sidebar)) end)
+    r:SetScript("OnLeave", function() local currentName = ns.contacts[idx]; bg:SetColorTexture(ns.U(ns.active==currentName and ns.C.sidSel or ns.C.sidebar)) end)
 
     local av = r:CreateTexture(nil, "ARTWORK")
     av:SetSize(38,38); av:SetPoint("LEFT", 8, 0)
@@ -121,12 +121,11 @@ local function buildContactRow(idx)
 
     r:RegisterForClicks("AnyUp")
     r:SetScript("OnClick", function(self, button)
+        local contactName = ns.contacts[idx]
         if button == "RightButton" then
-            if ns.showContextMenu then
-                ns.showContextMenu(idx, self)
-            end
+            if ns.showContextMenu then ns.showContextMenu(contactName, self) end
         else
-            ns.selectContact(idx)
+            ns.selectContact(contactName)
         end
     end)
 
@@ -146,13 +145,13 @@ function ns.updateContactList()
     for i, name in ipairs(ns.contacts) do
         local r = ns.contactRows[i] or buildContactRow(i)
         r.f:Show()
-        r.bg:SetColorTexture(ns.U(ns.active==i and ns.C.sidSel or ns.C.sidebar))
+        r.bg:SetColorTexture(ns.U(ns.active==name and ns.C.sidSel or ns.C.sidebar))
         r.av:SetColorTexture(ns.avatarColor(name))
         r.avT:SetText(name:sub(1,1):upper())
         
         local status = ns.contactStatus[name]
         local tag = ""
-        if WispCraftDB.muted and WispCraftDB.muted[name] then tag = " 🔇" end
+        if WispCraftDB.muted and WispCraftDB.muted[name] then tag = " ðŸ”‡" end
         if status == "AFK" then tag = tag .. " |cffff8c00[AFK]|r"
         elseif status == "DND" then tag = tag .. " |cffff4444[DND]|r" end
         r.nT:SetText(name .. tag)
@@ -160,13 +159,13 @@ function ns.updateContactList()
         local c = ns.convos[name]
         local last = c[#c]
         if last then
-            r.pT:SetText((last.out and "Tú: " or "")..last.msg)
+            r.pT:SetText((last.out and "TÃº: " or "")..last.msg)
             r.tsT:SetText(last.ts)
         end
 
         local note = WispCraftDB.notes and WispCraftDB.notes[name]
         if note then
-            r.noteT:SetText("📝 " .. note)
+            r.noteT:SetText("ðŸ“ " .. note)
             r.noteT:Show()
         else
             r.noteT:Hide()
@@ -179,9 +178,8 @@ function ns.updateContactList()
     end
 end
 
-function ns.selectContact(idx)
-    ns.active = idx
-    local name = ns.contacts[idx]
+function ns.selectContact(name)
+    ns.active = name
     ns.unread[name] = 0
     ns.headerName:SetText(name)
     
@@ -190,20 +188,20 @@ function ns.selectContact(idx)
         ns.hdrStatus:SetText("escribiendo...")
         ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
     elseif status == "AFK" then
-        ns.hdrStatus:SetText("🌙 AFK")
+        ns.hdrStatus:SetText("ðŸŒ™ AFK")
         ns.hdrStatus:SetTextColor(1, 0.55, 0) -- #ff8c00
     elseif status == "DND" then
-        ns.hdrStatus:SetText("⛔ DND")
+        ns.hdrStatus:SetText("â›” DND")
         ns.hdrStatus:SetTextColor(1, 0.26, 0.26) -- #ff4444
     elseif ns.wispPeers[name] then
-        ns.hdrStatus:SetText("en línea")
+        ns.hdrStatus:SetText("en lÃ­nea")
         ns.hdrStatus:SetTextColor(0.325, 0.741, 0.922) -- #53bdeb
         if ns.sendP2P then
             ns.sendP2P(name, "HELLO")
             ns.sendP2P(name, "READ")
         end
     else
-        ns.hdrStatus:SetText("en línea")
+        ns.hdrStatus:SetText("en lÃ­nea")
         ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
         if ns.sendP2P then ns.sendP2P(name, "HELLO") end
     end
@@ -302,9 +300,8 @@ local function buildContextMenu()
     ns.contextMenu = f
 end
 
-function ns.showContextMenu(idx, anchorFrame)
+function ns.showContextMenu(name, anchorFrame)
     if not ns.contextMenu then buildContextMenu() end
-    local name = ns.contacts[idx]
     ns.contextMenu.contactName = name
     
     if WispCraftDB.muted and WispCraftDB.muted[name] then
@@ -430,7 +427,7 @@ function ns.buildUI()
 
     ns.headerName = ch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.headerName:SetPoint("TOPLEFT", hA, "TOPRIGHT", 8, -4)
-    ns.headerName:SetText("Ningún Wisp")
+    ns.headerName:SetText("NingÃºn Wisp")
 
     ns.hdrStatus = ch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.hdrStatus:SetPoint("BOTTOMLEFT", hA, "BOTTOMRIGHT", 8, 4)
@@ -448,7 +445,7 @@ function ns.buildUI()
 
     ns.noConvLabel = ns.scrollFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.noConvLabel:SetPoint("CENTER")
-    ns.noConvLabel:SetText("Los susurros\naparecerán aquí.")
+    ns.noConvLabel:SetText("Los susurros\naparecerÃ¡n aquÃ­.")
     ns.noConvLabel:SetTextColor(0.5,0.5,0.5)
 
     -- Input
@@ -490,7 +487,7 @@ function ns.buildUI()
     local function doSend()
         local text = ns.inputBox:GetText()
         if text:len() > 0 and ns.active then
-            local target = ns.contacts[ns.active]
+            local target = ns.active
             if not ns.pendingOut[target] then ns.pendingOut[target] = {} end
             ns.pendingOut[target][text] = true
             
@@ -570,7 +567,7 @@ function ns.buildUI()
             end
             
             if ns.active and ns.sendP2P then
-                local target = ns.contacts[ns.active]
+                local target = ns.active
                 local isTyping = text:len() > 0
                 if isTyping ~= ns.lastTypingState then
                     ns.lastTypingState = isTyping
@@ -596,3 +593,5 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
+

@@ -1,8 +1,8 @@
-local ADDON_NAME, ns = ...
+﻿local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft Events — Listeners for Whispers & Combat (v1.1)
---  WoW Forever / Midnight · Build 12.1.0 (120100)
+--  WispCraft Events â€” Listeners for Whispers & Combat (v1.1)
+--  WoW Forever / Midnight Â· Build 12.1.0 (120100)
 -- ============================================================
 
 local eventFrame = CreateFrame("Frame")
@@ -48,18 +48,18 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             local name = ns.stripRealm(sender)
             if msg == "HELLO" then
                 ns.wispPeers[name] = true
-                if ns.active and ns.contacts[ns.active] == name then
+                if ns.active == name then
                     if ns.selectContact then ns.selectContact(ns.active) end
                 end
             elseif msg == "TYPING" then
                 ns.isTyping[name] = true
-                if ns.active and ns.contacts[ns.active] == name then
+                if ns.active == name then
                     ns.hdrStatus:SetText("escribiendo...")
                     ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561)
                 end
             elseif msg == "STOPPED" then
                 ns.isTyping[name] = nil
-                if ns.active and ns.contacts[ns.active] == name then
+                if ns.active == name then
                     if ns.selectContact then ns.selectContact(ns.active) end
                 end
             elseif msg == "READ" then
@@ -67,7 +67,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
                     for _, m in ipairs(ns.convos[name]) do
                         if m.out then m.read = true end
                     end
-                    if ns.active and ns.contacts[ns.active] == name then
+                    if ns.active == name then
                         if ns.renderChat then ns.renderChat() end
                     end
                 end
@@ -89,7 +89,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         end
 
         -- Update UI if it's the active conversation
-        if ns.active and ns.contacts[ns.active] == name then
+        if ns.active == name then
             ns.unread[name] = 0 -- Mark read
             if ns.sendP2P then ns.sendP2P(name, "READ") end
             if ns.renderChat then ns.renderChat() end
@@ -105,7 +105,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             ns.pendingOut[name][msg] = nil
         else
             ns.pushMessage(name, msg, true)
-            if ns.active and ns.contacts[ns.active] == name then
+            if ns.active == name then
                 if ns.renderChat then ns.renderChat() end
             end
             if ns.updateContactList then ns.updateContactList() end
@@ -136,3 +136,4 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         ns.setContactStatus(name, status)
     end
 end)
+

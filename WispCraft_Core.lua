@@ -1,8 +1,8 @@
-local ADDON_NAME, ns = ...
+﻿local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft Core — State, Constants, Theme & Helpers
---  WoW Forever / Midnight · Build 12.1.0 (120100)
+--  WispCraft Core â€” State, Constants, Theme & Helpers
+--  WoW Forever / Midnight Â· Build 12.1.0 (120100)
 -- ============================================================
 
 --------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ ns.pendingOut  = {}
 function ns.setContactStatus(name, status)
     ns.contactStatus[name] = status
     if ns.updateContactList then ns.updateContactList() end
-    if ns.active and ns.contacts[ns.active] == name then
+    if ns.active == name then
         if ns.selectContact then ns.selectContact(ns.active) end
     end
 end
@@ -89,23 +89,15 @@ function ns.deleteConvo(name)
             break
         end
     end
-    if ns.active and ns.contacts[ns.active] == name then
+    if ns.active == name then
         ns.active = nil
-        ns.headerName:SetText("Ningún Wisp")
+        ns.headerName:SetText("NingÃºn Wisp")
         ns.hdrStatus:SetText("selecciona un contacto")
         ns.hdrAvatarLetter:SetText("?")
         ns.inputBox:Disable()
         ns.sendBtn:Disable()
         ns.noConvLabel:Show()
         ns.renderChat()
-    elseif ns.active then
-        -- update active index
-        for i, n in ipairs(ns.contacts) do
-            if n == ns.contacts[ns.active] then
-                ns.active = i
-                break
-            end
-        end
     end
     if ns.updateContactList then ns.updateContactList() end
     if ns.updateMinimapBadge then ns.updateMinimapBadge() end
@@ -256,3 +248,4 @@ function ns.measureW(text, maxW)
     _mT:SetWidth(maxW - ns.BPAD*2); _mT:SetText(text)
     return math.min(_mT:GetStringWidth() + ns.BPAD*2 + 6, maxW)
 end
+
