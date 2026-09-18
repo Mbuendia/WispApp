@@ -33,11 +33,22 @@ end
 function ns.updateMinimapBadge()
     if not mmBadge then return end
     local total = ns.getTotalUnread()
+    if not ns.minimapAnim and mmBtn.CreateAnimationGroup then
+        ns.minimapAnim = mmBtn:CreateAnimationGroup()
+        ns.minimapAnim:SetLooping("REPEAT")
+        local alpha = ns.minimapAnim:CreateAnimation("Alpha")
+        alpha:SetFromAlpha(1); alpha:SetToAlpha(0.4); alpha:SetDuration(0.6); alpha:SetSmoothing("IN_OUT")
+    end
+
     if total > 0 then
         mmBadgeText:SetText(total > 9 and "9+" or tostring(total))
         mmBadge:Show()
+        if ns.minimapIconText then ns.minimapIconText:SetTextColor(0, 1, 0) end
+        if ns.minimapAnim and not ns.minimapAnim:IsPlaying() then ns.minimapAnim:Play() end
     else
         mmBadge:Hide()
+        if ns.minimapIconText then ns.minimapIconText:SetTextColor(1, 0.82, 0) end
+        if ns.minimapAnim then ns.minimapAnim:Stop(); mmBtn:SetAlpha(1) end
     end
     -- Also update peek bar if in peek mode
     if ns.peekMode and ns.peekBadgeText then

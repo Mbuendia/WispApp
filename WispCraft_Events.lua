@@ -82,8 +82,17 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         end
 
     elseif event == "CHAT_MSG_WHISPER" then
-        local msg, sender = ...
+        local msg, sender, _, _, _, _, _, _, _, _, _, guid = ...
         local name = ns.stripRealm(sender)
+        
+        if guid and GetPlayerInfoByGUID then
+            local _, class = GetPlayerInfoByGUID(guid)
+            if class then
+                WispCraftDB.classes = WispCraftDB.classes or {}
+                WispCraftDB.classes[name] = class
+            end
+        end
+
         ns.pushMessage(name, msg, false)
 
         -- Play standard whisper sound
@@ -93,8 +102,14 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             if WispCraftDB.settings and WispCraftDB.settings.playSounds then
                 PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
             end
-            if (ns.peekMode or not ns.phoneFrame:IsShown()) and UIFrameFlash and ns.peekBar then
-                UIFrameFlash(ns.peekBar, 0.5, 0.5, 3, true, 0, 0)
+            
+            if not InCombatLockdown() then
+                if ns.setPeekMode then ns.setPeekMode(false) end
+                if ns.phoneFrame then ns.phoneFrame:Show() end
+            else
+                if (ns.peekMode or not ns.phoneFrame:IsShown()) and UIFrameFlash and ns.peekBar then
+                    UIFrameFlash(ns.peekBar, 0.5, 0.5, 3, true, 0, 0)
+                end
             end
         end
 
@@ -107,8 +122,16 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         if ns.updateContactList then ns.updateContactList() end
 
     elseif event == "CHAT_MSG_WHISPER_INFORM" then
-        local msg, target = ...
+        local msg, target, _, _, _, _, _, _, _, _, _, guid = ...
         local name = ns.stripRealm(target)
+        
+        if guid and GetPlayerInfoByGUID then
+            local _, class = GetPlayerInfoByGUID(guid)
+            if class then
+                WispCraftDB.classes = WispCraftDB.classes or {}
+                WispCraftDB.classes[name] = class
+            end
+        end
         
         -- Dedup optimistic messages
         if ns.pendingOut[name] and ns.pendingOut[name][msg] then

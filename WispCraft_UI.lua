@@ -42,12 +42,29 @@ local function newBubble(m, lastY)
                 local dialog = StaticPopup_Show("WISPCRAFT_COPY_URL")
                 if dialog then dialog.data = url end
             end
-        elseif t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]") then
-            local zone, x, y = t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]")
-            if SlashCmdList["TOMTOM_WAY"] then
-                SlashCmdList["TOMTOM_WAY"](string.format("%s %s %s", zone, x, y))
+        elseif t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") or t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]") then
+            local mapID, x, y, zone
+            if t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") then
+                mapID, x, y = t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]")
+                zone = ""
             else
-                print("|cff53bdeb[WispCraft]|r TomTom no esta instalado. Coordenadas: " .. zone .. " " .. x .. " " .. y)
+                zone, x, y = t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]")
+                mapID = C_Map and C_Map.GetBestMapForUnit("player")
+            end
+            
+            if SlashCmdList["TOMTOM_WAY"] then
+                if zone ~= "" then
+                    SlashCmdList["TOMTOM_WAY"](string.format("%s %s %s", zone, x, y))
+                else
+                    SlashCmdList["TOMTOM_WAY"](string.format("%s %s", x, y))
+                end
+            elseif C_Map and C_Map.SetUserWaypoint and UiMapPoint and mapID then
+                local pt = UiMapPoint.CreateFromCoordinates(tonumber(mapID), tonumber(x)/100, tonumber(y)/100)
+                C_Map.SetUserWaypoint(pt)
+                C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+                print("|cff53bdeb[WispCraft]|r Marcador de mapa anadido en " .. x .. ", " .. y)
+            else
+                print("|cff53bdeb[WispCraft]|r Coordenadas: " .. x .. ", " .. y)
             end
         end
     end)
@@ -209,7 +226,7 @@ function ns.updateContactList()
 
         local note = WispCraftDB.notes and WispCraftDB.notes[name]
         if note then
-            r.noteT:SetText("ðŸ“ " .. note)
+            r.noteT:SetText("* " .. note)
             r.noteT:Show()
         else
             r.noteT:Hide()
@@ -256,7 +273,15 @@ function ns.selectContact(name)
     end
     
     ns.hdrAvatarLetter:SetText(name:sub(1,1):upper())
-    if ns.hdrAvatarBG then ns.hdrAvatarBG:SetColorTexture(ns.avatarColor(name)) end
+    if ns.hdrAvatarBG then 
+        local cClass = WispCraftDB.classes and WispCraftDB.classes[name]
+        if cClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[cClass] then
+            local rc = RAID_CLASS_COLORS[cClass]
+            ns.hdrAvatarBG:SetColorTexture(rc.r, rc.g, rc.b)
+        else
+            ns.hdrAvatarBG:SetColorTexture(ns.avatarColor(name))
+        end
+    end
     
     ns.inputBox:Enable(); ns.sendBtn:Enable()
     ns.noConvLabel:Hide()
@@ -446,7 +471,7 @@ function ns.buildUI()
     
     local pbT = pb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     pbT:SetPoint("LEFT", 14, 0)
-    pbT:SetText("|cff25d366Wisp|r|cffffffffCraft|r")
+    pbT:SetText("WispCraft")
     ns.peekBadgeText = pbT
 
     pb:SetScript("OnClick", function() ns.setPeekMode(false) end)
@@ -466,7 +491,7 @@ function ns.buildUI()
     sh:SetPoint("TOPRIGHT")
     ns.BG(sh, ns.C.hdrDark)
     local st = sh:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    st:SetPoint("CENTER", 0, 5); st:SetText("|cff25d366Wisp|r|cffffffffCraft|r")
+    st:SetPoint("CENTER", 0, 5); st:SetText("WispCraft")
 
     ns.contactListFrame = CreateFrame("Frame", nil, sd)
     ns.contactListFrame:SetPoint("TOPLEFT", sh, "BOTTOMLEFT")
@@ -490,9 +515,20 @@ function ns.buildUI()
     ch:SetPoint("TOPRIGHT")
     ns.BG(ch, ns.C.hdr)
 
-    local cClose = CreateFrame("Button", nil, ch, "UIPanelCloseButton")
-    cClose:SetPoint("RIGHT", -5, 0)
-    cClose:SetScript("OnClick", function() ns.phoneFrame:Hide(); ns.peekBar:Hide(); if WispCraftDB.settings and WispCraftDB.settings.playSounds then PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_CLOSE or 850) end end) -- v1.1 close goes to peek
+    local cClose = CreateFrame("Button", nil, ch)
+    cClose:SetSize(24, 24)
+    cClose:SetPoint("RIGHT", -8, 0)
+    local cTx = cClose:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    cTx:SetPoint("CENTER")
+    cTx:SetText("X")
+    cTx:SetTextColor(0.8, 0.8, 0.8)
+    cClose:SetScript("OnEnter", function() cTx:SetTextColor(1, 0.2, 0.2) end)
+    cClose:SetScript("OnLeave", function() cTx:SetTextColor(0.8, 0.8, 0.8) end)
+    cClose:SetScript("OnClick", function() 
+        ns.phoneFrame:Hide(); 
+        ns.peekBar:Hide(); 
+        if WispCraftDB.settings and WispCraftDB.settings.playSounds then PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_CLOSE or 850) end
+    end)
 
     local hA = ch:CreateTexture(nil, "ARTWORK")
     ns.hdrAvatarBG = hA

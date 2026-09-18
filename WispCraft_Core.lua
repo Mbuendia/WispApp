@@ -275,7 +275,7 @@ function ns.shareLocation()
             if pos and info then
                 local x = math.floor(pos.x * 10000) / 100
                 local y = math.floor(pos.y * 10000) / 100
-                return string.format("[GPS: %s %s %s]", info.name, x, y)
+                return string.format("[GPS:%d:%s:%s] %s", mapID, x, y, info.name)
             end
         end
     end
