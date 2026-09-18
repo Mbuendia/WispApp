@@ -313,15 +313,33 @@ function ns.buildUI()
     pf:SetMovable(true); pf:EnableMouse(true)
     pf:RegisterForDrag("LeftButton")
     pf:SetScript("OnDragStart", pf.StartMoving)
-    pf:SetScript("OnDragStop", pf.StopMovingOrSizing)
+    
+    pf:SetResizable(true)
+    pf:SetResizeBounds(390, 570, 800, 900)
+    
+    pf:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        WispCraftDB.width = self:GetWidth()
+        WispCraftDB.height = self:GetHeight()
+        ns.BMAX = self:GetWidth() * 0.4
+        ns.renderChat()
+    end)
+    
+    pf:SetScript("OnSizeChanged", function(self, width, height)
+        if ns.contentFrame then
+            ns.contentFrame:SetWidth(width - ns.SW - 30)
+        end
+    end)
+    
     pf:SetFrameStrata("DIALOG")
     ns.BG(pf, ns.C.phone)
     pf:Hide()
 
     -- Status Bar
     local sb = CreateFrame("Frame", nil, pf)
-    sb:SetSize(ns.PW, ns.STATUS_H)
-    sb:SetPoint("TOP")
+    sb:SetHeight(ns.STATUS_H)
+    sb:SetPoint("TOPLEFT")
+    sb:SetPoint("TOPRIGHT")
     ns.BG(sb, ns.C.topbar)
     local sbt = sb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     sbt:SetPoint("LEFT", 10, 0); sbt:SetText("WispCraft v1.1"); sbt:SetFont("Fonts\\FRIZQT__.TTF", 9)
@@ -349,13 +367,15 @@ function ns.buildUI()
     -- Sidebar
     local sd = CreateFrame("Frame", nil, pf)
     ns.sidebarFrame = sd
-    sd:SetSize(ns.SW, ns.PH - ns.STATUS_H)
+    sd:SetWidth(ns.SW)
     sd:SetPoint("TOPLEFT", 0, -ns.STATUS_H)
+    sd:SetPoint("BOTTOMLEFT")
     ns.BG(sd, ns.C.sidebar)
 
     local sh = CreateFrame("Frame", nil, sd)
     sh:SetSize(ns.SW, ns.HH)
     sh:SetPoint("TOPLEFT")
+    sh:SetPoint("TOPRIGHT")
     ns.BG(sh, ns.C.hdrDark)
     local st = sh:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     st:SetPoint("CENTER", 0, 5); st:SetText("|cff25d366Wisp|r|cffffffffApp|r")
@@ -373,8 +393,9 @@ function ns.buildUI()
 
     -- Header
     local ch = CreateFrame("Frame", nil, cp)
-    ch:SetSize(ns.PW - ns.SW, ns.HH)
+    ch:SetHeight(ns.HH)
     ch:SetPoint("TOPLEFT")
+    ch:SetPoint("TOPRIGHT")
     ns.BG(ch, ns.C.hdr)
 
     local cClose = CreateFrame("Button", nil, ch, "UIPanelCloseButton")
@@ -412,8 +433,9 @@ function ns.buildUI()
 
     -- Input
     local ia = CreateFrame("Frame", nil, cp)
-    ia:SetSize(ns.PW - ns.SW, ns.IH)
+    ia:SetHeight(ns.IH)
     ia:SetPoint("BOTTOMLEFT")
+    ia:SetPoint("BOTTOMRIGHT")
     ns.BG(ia, ns.C.inputBG)
 
     ns.inputBox = CreateFrame("EditBox", nil, ia, "InputBoxTemplate")
@@ -428,6 +450,22 @@ function ns.buildUI()
     local sTx = ns.sendBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     sTx:SetPoint("CENTER"); sTx:SetText(">")
     ns.sendBtn:Disable()
+
+    -- Resize Handle
+    local rb = CreateFrame("Button", nil, pf)
+    rb:SetSize(16, 16)
+    rb:SetPoint("BOTTOMRIGHT", 0, 0)
+    rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+    rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+    rb:SetScript("OnMouseDown", function() pf:StartSizing("BOTTOMRIGHT") end)
+    rb:SetScript("OnMouseUp", function() 
+        pf:StopMovingOrSizing()
+        WispCraftDB.width = pf:GetWidth()
+        WispCraftDB.height = pf:GetHeight()
+        ns.BMAX = pf:GetWidth() * 0.4
+        ns.renderChat()
+    end)
 
     local function doSend()
         local text = ns.inputBox:GetText()

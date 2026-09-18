@@ -25,6 +25,12 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             if ns.initSettings then ns.initSettings() end
             if ns.initTemplates then ns.initTemplates() end
             ns.buildUI()
+            
+            if WispCraftDB.width and WispCraftDB.height then
+                ns.phoneFrame:SetSize(WispCraftDB.width, WispCraftDB.height)
+                ns.BMAX = WispCraftDB.width * 0.4
+            end
+
             ns.buildMinimapButton()
             if WispCraftDB.settings and WispCraftDB.settings.startPeeked then
                 ns.setPeekMode(true)
