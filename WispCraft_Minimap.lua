@@ -1,8 +1,8 @@
-local ADDON_NAME, ns = ...
+﻿local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft Minimap — Button + Badge (v1.1)
---  WoW Forever / Midnight · Build 12.1.0 (120100)
+--  WispCraft Minimap â€” Button + Badge (v1.1)
+--  WoW Forever / Midnight Â· Build 12.1.0 (120100)
 -- ============================================================
 
 local mmBtn, mmBadge, mmBadgeText
@@ -63,7 +63,7 @@ function ns.buildMinimapButton()
     iconBG:SetAllPoints(); iconBG:SetColorTexture(ns.U(ns.C.hdr))
 
     local iconTxt = mmBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    iconTxt:SetAllPoints(); iconTxt:SetText("💬")
+    iconTxt:SetAllPoints(); iconTxt:SetText("W")
 
     -- Position on minimap edge
     local angle = math.rad(220)
@@ -120,3 +120,4 @@ function ns.buildMinimapButton()
     end)
     mmBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
+

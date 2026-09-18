@@ -413,7 +413,7 @@ function ns.buildUI()
 
     local cClose = CreateFrame("Button", nil, ch, "UIPanelCloseButton")
     cClose:SetPoint("RIGHT", -5, 0)
-    cClose:SetScript("OnClick", function() ns.setPeekMode(true) end) -- v1.1 close goes to peek
+    cClose:SetScript("OnClick", function() ns.phoneFrame:Hide(); ns.peekBar:Hide(); if WispCraftDB.settings and WispCraftDB.settings.playSounds then PlaySound(SOUNDKIT and SOUNDKIT.IG_MAINMENU_CLOSE or 850) end end) -- v1.1 close goes to peek
 
     local hA = ch:CreateTexture(nil, "ARTWORK")
     ns.hdrAvatarBG = hA
@@ -590,6 +590,7 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
 
