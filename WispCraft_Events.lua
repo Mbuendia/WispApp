@@ -37,7 +37,8 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         ns.pushMessage(name, msg, false)
 
         -- Play standard whisper sound
-        if WispCraftDB.settings and WispCraftDB.settings.playSounds then
+        local muted = WispCraftDB.muted and WispCraftDB.muted[name]
+        if not muted and WispCraftDB.settings and WispCraftDB.settings.playSounds then
             PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
         end
 

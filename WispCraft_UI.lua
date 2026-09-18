@@ -108,10 +108,25 @@ local function buildContactRow(idx)
     bT:SetAllPoints(); bT:SetFont("Fonts\\FRIZQT__.TTF", 8, "OUTLINE")
     bT:SetTextColor(1,1,1)
 
-    r:SetScript("OnClick", function() ns.selectContact(idx) end)
+    r:RegisterForClicks("AnyUp")
+    r:SetScript("OnClick", function(self, button)
+        if button == "RightButton" then
+            if ns.showContextMenu then
+                ns.showContextMenu(idx, self)
+            end
+        else
+            ns.selectContact(idx)
+        end
+    end)
+
+    local noteT = r:CreateFontString(nil, "OVERLAY")
+    noteT:SetFont("Fonts\\FRIZQT__.TTF", 9)
+    noteT:SetPoint("TOPLEFT", pT, "BOTTOMLEFT", 0, -2)
+    noteT:SetWidth(75); noteT:SetJustifyH("LEFT"); noteT:SetTextColor(1, 0.82, 0) -- Gold for note
+    noteT:SetWordWrap(false)
 
     if not ns.contactRows then ns.contactRows = {} end
-    ns.contactRows[idx] = {f=r, bg=bg, av=av, avT=avT, nT=nT, pT=pT, tsT=tsT, bF=bF, bT=bT}
+    ns.contactRows[idx] = {f=r, bg=bg, av=av, avT=avT, nT=nT, pT=pT, tsT=tsT, bF=bF, bT=bT, noteT=noteT}
     return r
 end
 
@@ -125,8 +140,9 @@ function ns.updateContactList()
         
         local status = ns.contactStatus[name]
         local tag = ""
-        if status == "AFK" then tag = " |cffff8c00[AFK]|r"
-        elseif status == "DND" then tag = " |cffff4444[DND]|r" end
+        if WispCraftDB.muted and WispCraftDB.muted[name] then tag = " 🔇" end
+        if status == "AFK" then tag = tag .. " |cffff8c00[AFK]|r"
+        elseif status == "DND" then tag = tag .. " |cffff4444[DND]|r" end
         r.nT:SetText(name .. tag)
 
         local c = ns.convos[name]
@@ -134,6 +150,14 @@ function ns.updateContactList()
         if last then
             r.pT:SetText((last.out and "Tú: " or "")..last.msg)
             r.tsT:SetText(last.ts)
+        end
+
+        local note = WispCraftDB.notes and WispCraftDB.notes[name]
+        if note then
+            r.noteT:SetText("📝 " .. note)
+            r.noteT:Show()
+        else
+            r.noteT:Hide()
         end
 
         local ur = ns.unread[name]
@@ -169,6 +193,108 @@ function ns.selectContact(idx)
     ns.updateContactList()
     ns.renderChat()
     if ns.updateMinimapBadge then ns.updateMinimapBadge() end
+end
+
+--------------------------------------------------------------------------------
+-- CONTEXT MENU
+--------------------------------------------------------------------------------
+
+StaticPopupDialogs["WISPCRAFT_EDIT_NOTE"] = {
+    text = "Editar nota para %s:",
+    button1 = ACCEPT,
+    button2 = CANCEL,
+    hasEditBox = true,
+    OnAccept = function(self, data)
+        local text = self.editBox:GetText()
+        ns.setNote(data, text)
+    end,
+    OnShow = function(self)
+        self.editBox:SetText((WispCraftDB.notes and WispCraftDB.notes[self.data]) or "")
+        self.editBox:SetFocus()
+    end,
+    EditBoxOnEnterPressed = function(self)
+        local text = self:GetText()
+        ns.setNote(self:GetParent().data, text)
+        self:GetParent():Hide()
+    end,
+    EditBoxOnEscapePressed = function(self)
+        self:GetParent():Hide()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+}
+
+local function buildContextMenu()
+    local f = CreateFrame("Frame", "WispCraftContextMenu", UIParent, "BackdropTemplate")
+    f:SetSize(150, 100)
+    f:SetFrameStrata("TOOLTIP")
+    f:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 16,
+        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    })
+    f:SetBackdropColor(0, 0, 0, 0.9)
+    f:Hide()
+    
+    local function createBtn(idx, text, func)
+        local b = CreateFrame("Button", nil, f)
+        b:SetSize(130, 20)
+        b:SetPoint("TOP", f, "TOP", 0, -10 - ((idx-1)*20))
+        
+        local tx = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        tx:SetPoint("LEFT", 5, 0)
+        tx:SetText(text)
+        b:SetFontString(tx)
+        
+        local ht = b:CreateTexture(nil, "HIGHLIGHT")
+        ht:SetAllPoints()
+        ht:SetColorTexture(1, 1, 1, 0.2)
+        
+        b:SetScript("OnClick", function()
+            func(f.contactName)
+            f:Hide()
+        end)
+        return b
+    end
+    
+    f.btnMute = createBtn(1, "Silenciar", function(name) ns.toggleMute(name) end)
+    f.btnNote = createBtn(2, "Editar Nota", function(name)
+        local dialog = StaticPopup_Show("WISPCRAFT_EDIT_NOTE", name)
+        if dialog then dialog.data = name end
+    end)
+    f.btnDel = createBtn(3, "Borrar Conv.", function(name) ns.deleteConvo(name) end)
+    f.btnCancel = createBtn(4, "Cerrar", function() end)
+    
+    -- Close when clicking outside
+    f:SetScript("OnUpdate", function(self)
+        if self:IsShown() and IsMouseButtonDown("LeftButton") then
+            if not self:IsMouseOver() then
+                self:Hide()
+            end
+        end
+    end)
+    
+    ns.contextMenu = f
+end
+
+function ns.showContextMenu(idx, anchorFrame)
+    if not ns.contextMenu then buildContextMenu() end
+    local name = ns.contacts[idx]
+    ns.contextMenu.contactName = name
+    
+    if WispCraftDB.muted and WispCraftDB.muted[name] then
+        ns.contextMenu.btnMute:GetFontString():SetText("Desilenciar")
+    else
+        ns.contextMenu.btnMute:GetFontString():SetText("Silenciar")
+    end
+    
+    local x, y = GetCursorPosition()
+    local scale = UIParent:GetEffectiveScale()
+    ns.contextMenu:ClearAllPoints()
+    ns.contextMenu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x/scale, y/scale)
+    ns.contextMenu:Show()
 end
 
 --------------------------------------------------------------------------------

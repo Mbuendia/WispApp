@@ -69,6 +69,55 @@ function ns.setContactStatus(name, status)
     end
 end
 
+function ns.toggleMute(name)
+    WispCraftDB.muted = WispCraftDB.muted or {}
+    WispCraftDB.muted[name] = not WispCraftDB.muted[name]
+    if WispCraftDB.muted[name] then
+        ns.unread[name] = 0
+    end
+    if ns.updateContactList then ns.updateContactList() end
+    if ns.updateMinimapBadge then ns.updateMinimapBadge() end
+end
+
+function ns.deleteConvo(name)
+    ns.convos[name] = nil
+    ns.unread[name] = nil
+    ns.contactStatus[name] = nil
+    for i, n in ipairs(ns.contacts) do
+        if n == name then
+            table.remove(ns.contacts, i)
+            break
+        end
+    end
+    if ns.active and ns.contacts[ns.active] == name then
+        ns.active = nil
+        ns.headerName:SetText("Ningún Wisp")
+        ns.hdrStatus:SetText("selecciona un contacto")
+        ns.hdrAvatarLetter:SetText("?")
+        ns.inputBox:Disable()
+        ns.sendBtn:Disable()
+        ns.noConvLabel:Show()
+        ns.renderChat()
+    elseif ns.active then
+        -- update active index
+        for i, n in ipairs(ns.contacts) do
+            if n == ns.contacts[ns.active] then
+                ns.active = i
+                break
+            end
+        end
+    end
+    if ns.updateContactList then ns.updateContactList() end
+    if ns.updateMinimapBadge then ns.updateMinimapBadge() end
+end
+
+function ns.setNote(name, note)
+    WispCraftDB.notes = WispCraftDB.notes or {}
+    if note == "" then note = nil end
+    WispCraftDB.notes[name] = note
+    if ns.updateContactList then ns.updateContactList() end
+end
+
 -- v1.1 state
 ns.peekMode    = false
 ns.wasVisible  = false
@@ -140,15 +189,21 @@ function ns.pushMessage(contact, msg, isOut)
     table.insert(ns.convos[contact], {msg=msg, ts=ns.ts(), out=isOut})
     ns.promoteContact(contact)
     if contact ~= ns.active then
-        ns.unread[contact] = (ns.unread[contact] or 0) + 1
+        local muted = WispCraftDB.muted and WispCraftDB.muted[contact]
+        if not muted then
+            ns.unread[contact] = (ns.unread[contact] or 0) + 1
+        end
     end
     if ns.updateMinimapBadge then ns.updateMinimapBadge() end
 end
 
 function ns.getTotalUnread()
     local total = 0
-    for _, count in pairs(ns.unread) do
-        total = total + count
+    for name, count in pairs(ns.unread) do
+        local muted = WispCraftDB.muted and WispCraftDB.muted[name]
+        if not muted then
+            total = total + count
+        end
     end
     return total
 end

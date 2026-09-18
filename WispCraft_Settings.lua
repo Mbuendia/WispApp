@@ -11,6 +11,8 @@ function ns.initSettings()
         playSounds   = true,
         startPeeked  = false,
     }
+    WispCraftDB.notes = WispCraftDB.notes or {}
+    WispCraftDB.muted = WispCraftDB.muted or {}
 end
 
 local function createCheckbox(parent, label, key, yOffset)
