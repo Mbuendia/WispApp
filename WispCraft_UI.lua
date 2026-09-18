@@ -173,6 +173,10 @@ function ns.updateContactList()
             r.bF:Show(); r.bT:SetText(ur > 9 and "9+" or ur)
         else r.bF:Hide() end
     end
+
+    for i = #ns.contacts + 1, #ns.contactRows do
+        if ns.contactRows[i] then ns.contactRows[i].f:Hide() end
+    end
 end
 
 function ns.selectContact(name)
@@ -592,6 +596,8 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
+
 
 
 
