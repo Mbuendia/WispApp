@@ -180,6 +180,7 @@ function ns.updateContactList()
 end
 
 function ns.selectContact(name)
+    if not name then return end
     ns.active = name
     ns.unread[name] = 0
     ns.headerName:SetText(name)
@@ -304,6 +305,7 @@ local function buildContextMenu()
 end
 
 function ns.showContextMenu(name, anchorFrame)
+    if not name then return end
     if not ns.contextMenu then buildContextMenu() end
     ns.contextMenu.contactName = name
     
@@ -596,6 +598,7 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
 
