@@ -138,7 +138,7 @@ local function buildContactRow(idx)
 
     if not ns.contactRows then ns.contactRows = {} end
     ns.contactRows[idx] = {f=r, bg=bg, av=av, avT=avT, nT=nT, pT=pT, tsT=tsT, bF=bF, bT=bT, noteT=noteT}
-    return r
+    return ns.contactRows[idx]
 end
 
 function ns.updateContactList()
