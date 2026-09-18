@@ -26,6 +26,12 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         local name = ...
         if name == "WispCraft" then
             if ns.initFactionTheme then ns.initFactionTheme() end
+            
+            -- Hide default whisper tabs/frames
+            local function hideWisp() return true end
+            ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", hideWisp)
+            ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", hideWisp)
+            SetCVar("whisperMode", "inline") -- Prevent popout frames
             C_ChatInfo.RegisterAddonMessagePrefix("WISPCRAFT")
             if ns.initSettings then ns.initSettings() end
             if ns.initTemplates then ns.initTemplates() end
@@ -86,6 +92,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             if ns.doShake then ns.doShake() end
             if WispCraftDB.settings and WispCraftDB.settings.playSounds then
                 PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
+            end
+            if (ns.peekMode or not ns.phoneFrame:IsShown()) and UIFrameFlash and ns.peekBar then
+                UIFrameFlash(ns.peekBar, 0.5, 0.5, 3, true, 0, 0)
             end
         end
 

@@ -32,7 +32,7 @@ local function newBubble(m, lastY)
     local w = ns.measureW(text, ns.BMAX)
     local h = ns.measureH(text, w) + 18
 
-    local b = CreateFrame("Button", nil, ns.contentFrame)
+    local b = CreateFrame("Button", nil, ns.contentFrame, "BackdropTemplate")
     b.rawText = text
     b:SetScript("OnClick", function(self)
         local t = self.rawText
@@ -77,18 +77,26 @@ local function newBubble(m, lastY)
     if isOut then b:SetPoint("RIGHT", -ns.BPAD, 0)
     else          b:SetPoint("LEFT", ns.BPAD, 0) end
 
-    ns.BG(b, isOut and ns.C.bOut or ns.C.bIn)
+    b:SetSize(w, h + 8)
+
+    b:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8x8",
+        edgeFile = "Interface\\Buttons\\WHITE8x8",
+        edgeSize = 1,
+        insets = {left=0, right=0, top=0, bottom=0}
+    })
+    b:SetBackdropColor(ns.U(isOut and ns.C.bOut or ns.C.bIn))
+    b:SetBackdropBorderColor(0,0,0, 0.4)
 
     local txt = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    txt:SetPoint("TOPLEFT", ns.BPAD, -5)
-    txt:SetPoint("BOTTOMRIGHT", -ns.BPAD, 12)
+    txt:SetPoint("TOPLEFT", ns.BPAD, -8)
+    txt:SetPoint("BOTTOMRIGHT", -ns.BPAD, 16)
     txt:SetJustifyH("LEFT"); txt:SetJustifyV("TOP")
     txt:SetText(text); txt:SetTextColor(1,1,1)
-    
 
     local ts = b:CreateFontString(nil, "OVERLAY")
     ts:SetFont("Fonts\\FRIZQT__.TTF", 8)
-    ts:SetPoint("BOTTOMRIGHT", -5, 3)
+    ts:SetPoint("BOTTOMRIGHT", -8, 6)
     if isOut then
         local color = isRead and "ff53bdeb" or "ff25d366"
         ts:SetText(tsStr .. " |c" .. color .. "âœ“âœ“|r")
@@ -677,6 +685,7 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
 
