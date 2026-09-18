@@ -35,5 +35,6 @@ Puedes utilizar tanto /wispcraft como el atajo corto /wc:
 * ✅ **v1.2** - Panel /wc config, Integración de estados AFK/DND de WoW.
 * ✅ **v1.3** - Menú Contextual, Sistema de Silenciar (Mute), Borrar Conversación, Notas de contacto.
 * ✅ **v1.4** - Plantillas (Autocomplete con ::), Renderizado de Links de Objetos (Shift+Clic).
-* ⏳ **v1.5** - *(Próximamente)* Redimensionado fluido de la ventana principal (Drag-to-resize).
-* ⏳ **v1.6** - *(Próximamente)* Protocolo WispCraft P2P: Animación de "escribiendo..." (•••), acuses de lectura reales (ticks azules ✓✓) y vibración/shake al recibir mensajes importantes.
+* ✅ **v1.5** - Redimensionado fluido de la ventana principal (Drag-to-resize).
+* ✅ **v1.6** - Protocolo WispCraft P2P: Animación de "escribiendo..." (•••), acuses de lectura reales (ticks azules ✓✓) y vibración/shake al recibir mensajes importantes.
+
