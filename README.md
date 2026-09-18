@@ -1,244 +1,39 @@
-# ?? WispCraft ó WispCraft para WoW Forever
+Ôªø# WispCraft
 
-> **WhatsApp-style whisper interface for World of Warcraft: Forever**
-> Build target: `12.1.0 ∑ Interface 120100 ∑ Midnight Modern API`
+WispCraft es un addon para World of Warcraft (Midnight / Forever) que transforma el sistema de susurros nativo en una interfaz moderna al estilo de una app de mensajer√≠a (tipo WhatsApp/Telegram).
 
-![WispCraft Preview](docs/preview.jpg)
+## ‚ú® Caracter√≠sticas Actuales (v1.4)
 
----
-
-## ? øQuÈ es WispCraft?
-
-WispCraft convierte los susurros (*whispers / wisps*) de WoW en una interfaz de chat estilo **WhatsApp Dark**, flotante y arrastrable sobre la pantalla del juego.
-
-- Cada jugador que te susurra tiene su propia **conversaciÛn con burbujas**
-- Los mensajes entrantes aparecen a la izquierda (teal oscuro) y los salientes a la derecha (verde WA)
-- Incluye **lista de contactos** con previsualizaciones, timestamps y badges de no leÌdos
-- Se integra con el chat nativo: cualquier `/susurro` que mandes desde el chat est·ndar tambiÈn aparece aquÌ
-
----
-
-## ??? Preview
-
-| Elemento | DescripciÛn |
-|---|---|
-| **WispCraft** | Header lateral verde con el nombre del addon |
-| **Lista de contactos** | Sidebar izquierdo con avatar inicial, preview del ˙ltimo mensaje, hora y badge de no leÌdos |
-| **ConversaciÛn** | Panel derecho con burbujas, doble tick ?? en mensajes enviados |
-| **Input** | Campo de texto con placeholder + botÛn enviar verde |
-| **Status bar** | Barra superior simulando un telÈfono real (hora, baterÌa) |
+* üì± **Interfaz Moderna:** Burbujas de chat, historial independiente por contacto y ordenaci√≥n autom√°tica por √∫ltima interacci√≥n.
+* üëÅÔ∏è **Modo Peek:** Minimiza la interfaz a un peque√±o header de 52px que no interfiere en tu visi√≥n de juego.
+* üî¥ **Notificaciones Globales:** Bot√≥n integrado en el minimapa con contador rojo de mensajes no le√≠dos.
+* ‚öôÔ∏è **Panel de Configuraci√≥n UI:** Interfaz visual /wc config para modificar el comportamiento sin tocar c√≥digo.
+* üí§ **Rastreo Auto AFK/DND:** Visualiza al instante si tus contactos est√°n ausentes (üåô) o en no molestar (‚õî).
+* üñ±Ô∏è **Men√∫ Contextual:** Haz clic derecho en un contacto de la lista para silenciarlo, borrar el historial o a√±adir una nota.
+* üìù **Notas de Jugador:** Escribe apuntes persistentes bajo el nombre de cada contacto (ej: "L√≠der de Raid" o "Vendedor de pociones").
+* ‚ö° **Respuestas R√°pidas (Plantillas):** Escribe :: o / en el cuadro de texto para desplegar el men√∫ de autocompletado y responder al instante.
+* üü° **Links de Objetos:** Soporte total para enlazar objetos haciendo Shift+Clic desde tu mochila directo al chat.
+* ‚öîÔ∏è **Auto-Ocultar:** Opci√≥n para que el addon entre en modo Peek autom√°ticamente al detectar el inicio de un combate.
 
 ---
 
-## ?? Estructura del Proyecto
+## ‚å®Ô∏è Gu√≠a R√°pida de Uso (Comandos)
 
-```
-WispCraft/
-¶
-+-- WispCraft.toc              ? Manifiesto del addon (Interface: 120100)
-+-- WispCraft.lua              ? LÛgica principal + UI completa
-¶
-+-- docs/
-¶   +-- preview.jpg           ? Mockup visual de la interfaz
-¶
-+-- libs/
-¶   +-- (librerÌas externas futuras, ej: LibStub, AceDB)
-¶
-+-- .vscode/
-¶   +-- settings.json         ? ConfiguraciÛn del workspace VS Code
-¶   +-- extensions.json       ? Extensiones recomendadas
-¶
-+-- CHANGELOG.md              ? Historial de versiones
-+-- README.md                 ? Este archivo
-```
+Puedes utilizar tanto /wispcraft como el atajo corto /wc:
+
+* /wc - Alterna entre abrir, minimizar al Modo Peek y cerrar el tel√©fono.
+* /wc config (o /wc settings) - Abre el panel central de opciones. Desde aqu√≠ gestionas el sonido, el combate y creas o borras tus plantillas r√°pidas.
+* /wc combat on o /wc combat off - Atajo para activar/desactivar la ocultaci√≥n autom√°tica en fase de combate.
+* /wc reset - Formatea la base de datos local y recarga la interfaz. ¬°Atenci√≥n! Esto borrar√° tus notas y plantillas guardadas.
 
 ---
 
-## ?? InstalaciÛn
+## üó∫Ô∏è Roadmap de Implementaci√≥n
 
-### MÈtodo manual
-```
-1. Copia la carpeta WispCraft/ completa en:
-   _retail_\Interface\AddOns\WispCraft\
-
-2. Inicia WoW (o /reload si ya est· abierto)
-
-3. Activa el addon en el men˙ de Addons del selector de personaje
-```
-
-### Verificar versiÛn de interfaz
-Si WoW muestra el addon como "desactualizado", confirma el n˙mero correcto:
-```lua
--- En el chat de WoW:
-/dump select(4, GetBuildInfo())
--- Actualiza ## Interface: XXXXXX en WispCraft.toc con ese n˙mero
-```
-
----
-
-## ?? Uso
-
-### Comandos
-
-| Comando | AcciÛn |
-|---|---|
-| `/WispCraft` o `/wc` | Abre / cierra el telÈfono |
-| `/wc reset` | Resetea la posiciÛn al centro |
-
-### BotÛn del minimapa
-- Aparece un botÛn ?? en el borde del minimapa (posiciÛn 220∞)
-- Clic izquierdo ? abre/cierra WispCraft
-
-### Flujo de uso
-1. Alguien te susurra ? **WispCraft se abre autom·ticamente**
-2. La conversaciÛn aparece seleccionada con las burbujas
-3. Escribe en el campo de texto y pulsa **Enter** o el botÛn **?**
-4. Si tienes varios susurros pendientes, el badge verde muestra cu·ntos no leÌdos hay
-5. Haz clic en un contacto del sidebar para cambiar de conversaciÛn
-
----
-
-## ?? Restricciones del API (Midnight / WoW Forever)
-
-WoW: Forever usa las **Midnight Modern API restrictions**. WispCraft respeta estas reglas:
-
-| API | Estado | Nota |
-|---|---|---|
-| `CHAT_MSG_WHISPER` | ? Permitido | Evento de susurro entrante |
-| `CHAT_MSG_WHISPER_INFORM` | ? Permitido | Evento de susurro saliente |
-| `SendChatMessage("msg", "WHISPER", ...)` | ? Permitido | EnvÌo de susurros |
-| `CreateFrame`, `ScrollFrame` | ? Permitido | UI customization total |
-| `SavedVariables` (posiciÛn) | ? Permitido | Persistencia entre sesiones |
-| Datos de combate internos | ? Bloqueado | No usado ó fuera de scope |
-
-> **WispCraft es 100% compatible con las Midnight API restrictions** porque solo
-> trabaja con el sistema de chat, sin tocar datos de combate, cooldowns ni buffs.
-
----
-
-## ?? DiseÒo y Tema
-
-### Paleta de colores (WhatsApp Dark)
-
-| Token | Hex aproximado | Uso |
-|---|---|---|
-| `hdr` | `#12:8F:61` | Header y botÛn enviar |
-| `hdrDark` | `#0B:66:40` | Header sidebar |
-| `bOut` | `#12:5C:3F` | Burbujas salientes |
-| `bIn` | `#22:32:38` | Burbujas entrantes |
-| `screen` | `#12:1F:27` | Fondo de chat |
-| `sidebar` | `#0D:11:15` | Fondo sidebar |
-| `badge` | `#12:8F:61` | Badge de no leÌdos |
-
-### Avatares
-Los avatares de contacto usan la **inicial del nombre** con un color generado deterministamente a partir del hash del nombre, garantizando que cada jugador siempre tenga el mismo color.
-
----
-
-## ??? Roadmap ó Features pendientes
-
-### v1.1 ó Persistencia
-- [ ] Guardar conversaciones en `SavedVariables` entre sesiones
-- [ ] Historial persistente (˙ltimos N mensajes por contacto)
-- [ ] ConfiguraciÛn de cu·ntos mensajes guardar
-
-### v1.2 ó UX
-- [ ] NotificaciÛn flash en el tÌtulo de la ventana
-- [ ] Emojis de WoW (`:)` ? ?? auto-conversiÛn)
-- [ ] B˙squeda en conversaciones (`/wc search <texto>`)
-- [ ] Silenciar a un contacto especÌfico
-
-### v1.3 ó Estilo avanzado
-- [ ] Modo claro (WhatsApp Light)
-- [ ] Marcos redondeados con `Backdrop` mejorado
-- [ ] Foto de perfil basada en la clase del personaje (usando texturas de WoW)
-- [ ] AnimaciÛn de typing dots "..."
-
-### v1.4 ó IntegraciÛn
-- [ ] Slash command r·pido: `/w <nombre> <mensaje>` desde WispCraft
-- [ ] IntegraciÛn con el sistema de amigos de BNet
-- [ ] BotÛn para exportar historial al chat principal
-
-### v2.0 ó Multi-canal *(requiere investigaciÛn de API)*
-- [ ] Soporte para canales de guild como "conversaciones de grupo"
-- [ ] Vista de grupo (guild officer, etc.)
-
----
-
-## ??? Desarrollo
-
-### Requisitos
-- **VS Code** con extensiones recomendadas (ver `.vscode/extensions.json`)
-- WoW instalado con `_retail_` activo
-
-### Setup del entorno
-```bash
-# Ruta de desarrollo (symlink recomendado en Windows):
-mklink /D "C:\Program Files (x86)\World of Warcraft\_retail_\Interface\AddOns\WispCraft" "C:\ruta\al\proyecto\WispCraft"
-```
-
-### Ciclo de desarrollo
-```lua
--- 1. Editar WispCraft.lua en VS Code
--- 2. En WoW: /reload
--- 3. Probar susurros con /w <tuOtroPersonaje> <mensaje>
--- 4. Para debug:
-/dump WispCraftDB              -- ver datos guardados
-/script WispCraftPhone:Show()  -- mostrar el frame a mano
-/wc reset                     -- resetear posiciÛn
-```
-
-### Arquitectura del cÛdigo
-
-```
-WispCraft.lua
-¶
-+-- CONSTANTS & THEME     -- Paleta de colores, tamaÒos de layout
-+-- STATE                 -- convos[], unread[], contacts[], active
-+-- HELPERS               -- ts(), me(), stripRealm(), pushMessage()
-+-- MEASUREMENT           -- measureH(), measureW() (FontString oculto)
-+-- BUBBLE FACTORY        -- newBubble(), clearBubbles()
-+-- RENDER CHAT           -- renderChat() ó re-renders all bubbles
-+-- CONTACT ROW FACTORY   -- buildContactRow()
-+-- UPDATE CONTACT LIST   -- updateContactList()
-+-- SELECT CONTACT        -- selectContact()
-+-- SEND WHISPER          -- doSend() + pendingOut dedup
-+-- BUILD UI              -- buildUI() ó construye todos los frames
-+-- MINIMAP BUTTON        -- buildMinimapButton()
-+-- EVENT HANDLER         -- ADDON_LOADED, CHAT_MSG_WHISPER, CHAT_MSG_WHISPER_INFORM
-+-- SLASH COMMANDS        -- /WispCraft, /wc
-```
-
-### Convenciones de cÛdigo
-- **Namespacing**: todo privado en `local`. Solo `WispCraftDB` y frames nombrados son globales.
-- **Dedup de mensajes salientes**: `pendingOut[target][msg]` evita duplicados entre el push optimista y el evento `CHAT_MSG_WHISPER_INFORM`.
-- **MediciÛn de texto**: Un frame oculto con `FontString` mide el alto/ancho antes de crear cada burbuja, garantizando layout correcto.
-- **No hay cooldowns ni datos de combate**: 100% dentro de las Midnight API restrictions.
-
----
-
-## ?? Referencias API usadas
-
-| API | DescripciÛn |
-|---|---|
-| [`CHAT_MSG_WHISPER`](https://warcraft.wiki.gg/wiki/CHAT_MSG_WHISPER) | Evento susurro entrante |
-| [`CHAT_MSG_WHISPER_INFORM`](https://warcraft.wiki.gg/wiki/CHAT_MSG_WHISPER_INFORM) | Evento susurro saliente |
-| [`SendChatMessage`](https://warcraft.wiki.gg/wiki/API_SendChatMessage) | Enviar mensaje |
-| [`CreateFrame`](https://warcraft.wiki.gg/wiki/API_CreateFrame) | Crear frames de UI |
-| [`C_Timer.After`](https://warcraft.wiki.gg/wiki/API_C_Timer.After) | Timer async (scroll to bottom) |
-| [`C_Timer.NewTicker`](https://warcraft.wiki.gg/wiki/API_C_Timer.NewTicker) | Ticker para el reloj |
-| [`PlaySound`](https://warcraft.wiki.gg/wiki/API_PlaySound) | Sonido de notificaciÛn |
-| [`UnitName`](https://warcraft.wiki.gg/wiki/API_UnitName) | Nombre del jugador |
-| [`SavedVariables`](https://warcraft.wiki.gg/wiki/Saving_variables_between_game_sessions) | Persistencia |
-| [FrameXML Live (69814)](https://www.townlong-yak.com/framexml/live) | Referencia UI Blizzard |
-
----
-
-## ?? Licencia
-
-MIT License ó Libre para uso, modificaciÛn y distribuciÛn.
-Addon creado para **WoW: Forever** con Midnight Modern API.
-
----
-
-*Generado con Antigravity ∑ WoW Forever Build 12.1.0 (69814) ∑ Septiembre 2026*
+* ‚úÖ **v1.0** - Versi√≥n base (dise√±o UI y anclajes).
+* ‚úÖ **v1.1** - C√≥digo refactorizado (6 subm√≥dulos), Modo Peek, Badge Minimapa.
+* ‚úÖ **v1.2** - Panel /wc config, Integraci√≥n de estados AFK/DND de WoW.
+* ‚úÖ **v1.3** - Men√∫ Contextual, Sistema de Silenciar (Mute), Borrar Conversaci√≥n, Notas de contacto.
+* ‚úÖ **v1.4** - Plantillas (Autocomplete con ::), Renderizado de Links de Objetos (Shift+Clic).
+* ‚è≥ **v1.5** - *(Pr√≥ximamente)* Redimensionado fluido de la ventana principal (Drag-to-resize).
+* ‚è≥ **v1.6** - *(Pr√≥ximamente)* Protocolo WispCraft P2P: Animaci√≥n de "escribiendo..." (‚Ä¢‚Ä¢‚Ä¢), acuses de lectura reales (ticks azules ‚úì‚úì) y vibraci√≥n/shake al recibir mensajes importantes.
