@@ -122,7 +122,12 @@ function ns.updateContactList()
         r.bg:SetColorTexture(ns.U(ns.active==i and ns.C.sidSel or ns.C.sidebar))
         r.av:SetColorTexture(ns.avatarColor(name))
         r.avT:SetText(name:sub(1,1):upper())
-        r.nT:SetText(name)
+        
+        local status = ns.contactStatus[name]
+        local tag = ""
+        if status == "AFK" then tag = " |cffff8c00[AFK]|r"
+        elseif status == "DND" then tag = " |cffff4444[DND]|r" end
+        r.nT:SetText(name .. tag)
 
         local c = ns.convos[name]
         local last = c[#c]
@@ -143,7 +148,19 @@ function ns.selectContact(idx)
     local name = ns.contacts[idx]
     ns.unread[name] = 0
     ns.headerName:SetText(name)
-    ns.hdrStatus:SetText("en línea")
+    
+    local status = ns.contactStatus[name]
+    if status == "AFK" then
+        ns.hdrStatus:SetText("🌙 AFK")
+        ns.hdrStatus:SetTextColor(1, 0.55, 0) -- #ff8c00
+    elseif status == "DND" then
+        ns.hdrStatus:SetText("⛔ DND")
+        ns.hdrStatus:SetTextColor(1, 0.26, 0.26) -- #ff4444
+    else
+        ns.hdrStatus:SetText("en línea")
+        ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
+    end
+    
     ns.hdrAvatarLetter:SetText(name:sub(1,1):upper())
     ns.hdrAvatarLetter:GetParent():SetColorTexture(ns.avatarColor(name))
     

@@ -8,7 +8,9 @@ local ADDON_NAME, ns = ...
 SLASH_WispCraft1 = "/WispCraft"
 SLASH_WispCraft2 = "/wc"
 SlashCmdList["WispCraft"] = function(msg)
-    if msg == "reset" then
+    if msg == "config" or msg == "settings" then
+        if ns.toggleConfig then ns.toggleConfig() end
+    elseif msg == "reset" then
         WispCraftDB = {}
         ReloadUI()
     elseif msg == "combat on" then

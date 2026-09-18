@@ -56,9 +56,18 @@ WispCraftDB = WispCraftDB or {}
 ns.convos      = {}
 ns.unread      = {}
 ns.contacts    = {}
+ns.contactStatus = {}
 ns.active      = nil
 ns.bubbles     = {}
 ns.pendingOut  = {}
+
+function ns.setContactStatus(name, status)
+    ns.contactStatus[name] = status
+    if ns.updateContactList then ns.updateContactList() end
+    if ns.active and ns.contacts[ns.active] == name then
+        if ns.selectContact then ns.selectContact(ns.active) end
+    end
+end
 
 -- v1.1 state
 ns.peekMode    = false

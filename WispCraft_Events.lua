@@ -14,6 +14,10 @@ eventFrame:RegisterEvent("CHAT_MSG_WHISPER_INFORM")
 eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
+-- v1.2: AFK/DND detection
+eventFrame:RegisterEvent("CHAT_MSG_AFK")
+eventFrame:RegisterEvent("CHAT_MSG_DND")
+
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local name = ...
@@ -21,7 +25,10 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
             if ns.initSettings then ns.initSettings() end
             ns.buildUI()
             ns.buildMinimapButton()
-            print("|cff25d366WispCraft v1.1|r loaded. Type /wc to open or /wc combat to toggle combat auto-hide.")
+            if WispCraftDB.settings and WispCraftDB.settings.startPeeked then
+                ns.setPeekMode(true)
+            end
+            print("|cff25d366WispCraft v1.2|r loaded. Type /wc to open.")
         end
 
     elseif event == "CHAT_MSG_WHISPER" then
@@ -30,7 +37,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         ns.pushMessage(name, msg, false)
 
         -- Play standard whisper sound
-        PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
+        if WispCraftDB.settings and WispCraftDB.settings.playSounds then
+            PlaySound(SOUNDKIT and SOUNDKIT.IG_CHAT_WHISPER_NOTIFY or 566)
+        end
 
         -- Update UI if it's the active conversation
         if ns.active and ns.contacts[ns.active] == name then
@@ -71,5 +80,11 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
                 ns.wasVisible = false
             end
         end
+
+    elseif event == "CHAT_MSG_AFK" or event == "CHAT_MSG_DND" then
+        local msg, sender = ...
+        local name = ns.stripRealm(sender)
+        local status = (event == "CHAT_MSG_AFK") and "AFK" or "DND"
+        ns.setContactStatus(name, status)
     end
 end)
