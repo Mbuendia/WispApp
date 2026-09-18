@@ -223,12 +223,12 @@ StaticPopupDialogs["WISPCRAFT_EDIT_NOTE"] = {
     button2 = CANCEL,
     hasEditBox = true,
     OnAccept = function(self, data)
-        local text = self.editBox:GetText()
+        local text = (self.editBox or self.EditBox):GetText()
         ns.setNote(data, text)
     end,
     OnShow = function(self)
-        self.editBox:SetText((WispCraftDB.notes and WispCraftDB.notes[self.data]) or "")
-        self.editBox:SetFocus()
+        (self.editBox or self.EditBox):SetText((WispCraftDB.notes and WispCraftDB.notes[self.data]) or "")
+        (self.editBox or self.EditBox):SetFocus()
     end,
     EditBoxOnEnterPressed = function(self)
         local text = self:GetText()
@@ -590,6 +590,7 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
 
