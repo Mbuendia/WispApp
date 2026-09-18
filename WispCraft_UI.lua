@@ -45,10 +45,7 @@ local function newBubble(m, lastY)
     txt:SetPoint("BOTTOMRIGHT", -ns.BPAD, 12)
     txt:SetJustifyH("LEFT"); txt:SetJustifyV("TOP")
     txt:SetText(text); txt:SetTextColor(1,1,1)
-    txt:SetHyperlinksEnabled(true)
-
-    b:SetHyperlinksEnabled(true)
-    b:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
+    
 
     local ts = b:CreateFontString(nil, "OVERLAY")
     ts:SetFont("Fonts\\FRIZQT__.TTF", 8)
@@ -593,5 +590,6 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
