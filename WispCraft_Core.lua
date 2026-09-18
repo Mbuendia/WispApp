@@ -111,6 +111,29 @@ function ns.deleteConvo(name)
     if ns.updateMinimapBadge then ns.updateMinimapBadge() end
 end
 
+function ns.initTemplates()
+    WispCraftDB = WispCraftDB or {}
+    WispCraftDB.templates = WispCraftDB.templates or {"Ahora voy", "En combate"}
+end
+
+function ns.getTemplates()
+    if not WispCraftDB.templates then ns.initTemplates() end
+    return WispCraftDB.templates
+end
+
+function ns.addTemplate(text)
+    if not WispCraftDB.templates then ns.initTemplates() end
+    table.insert(WispCraftDB.templates, text)
+end
+
+function ns.removeTemplate(idx)
+    if not WispCraftDB.templates then ns.initTemplates() end
+    if WispCraftDB.templates[idx] then
+        table.remove(WispCraftDB.templates, idx)
+    end
+end
+
+
 function ns.setNote(name, note)
     WispCraftDB.notes = WispCraftDB.notes or {}
     if note == "" then note = nil end

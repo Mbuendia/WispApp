@@ -44,6 +44,10 @@ local function newBubble(text, tsStr, isOut, lastY)
     txt:SetPoint("BOTTOMRIGHT", -ns.BPAD, 12)
     txt:SetJustifyH("LEFT"); txt:SetJustifyV("TOP")
     txt:SetText(text); txt:SetTextColor(1,1,1)
+    txt:SetHyperlinksEnabled(true)
+
+    b:SetHyperlinksEnabled(true)
+    b:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
 
     local ts = b:CreateFontString(nil, "OVERLAY")
     ts:SetFont("Fonts\\FRIZQT__.TTF", 8)
@@ -439,6 +443,74 @@ function ns.buildUI()
             ns.updateContactList()
         end
     end
+
+    local function buildQuickReplyPopup(parent)
+        local popup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+        popup:SetSize(200, 150)
+        popup:SetPoint("BOTTOMLEFT", ns.inputBox, "TOPLEFT", -5, 5)
+        popup:SetBackdrop({
+            bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile = true, tileSize = 16, edgeSize = 16,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        })
+        popup:SetBackdropColor(0, 0, 0, 0.9)
+        popup:SetFrameStrata("DIALOG")
+        popup:Hide()
+
+        popup.buttons = {}
+        ns.quickReplyPopup = popup
+
+        function popup:Update()
+            local templates = ns.getTemplates and ns.getTemplates() or {}
+            for _, b in ipairs(self.buttons) do b:Hide() end
+            
+            local h = 10
+            for i, text in ipairs(templates) do
+                local btn = self.buttons[i]
+                if not btn then
+                    btn = CreateFrame("Button", nil, self)
+                    btn:SetSize(180, 20)
+                    btn:SetPoint("TOP", self, "TOP", 0, -h)
+                    
+                    local tx = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+                    tx:SetPoint("LEFT", 5, 0)
+                    tx:SetJustifyH("LEFT")
+                    tx:SetWidth(170)
+                    tx:SetWordWrap(false)
+                    btn:SetFontString(tx)
+                    
+                    local ht = btn:CreateTexture(nil, "HIGHLIGHT")
+                    ht:SetAllPoints()
+                    ht:SetColorTexture(1, 1, 1, 0.2)
+                    
+                    btn:SetScript("OnClick", function()
+                        ns.inputBox:SetText(text)
+                        self:Hide()
+                    end)
+                    self.buttons[i] = btn
+                end
+                btn:SetText(text)
+                btn:SetPoint("TOP", self, "TOP", 0, -h)
+                btn:Show()
+                h = h + 20
+            end
+            self:SetHeight(math.max(h + 10, 30))
+        end
+    end
+
+    ns.inputBox:SetScript("OnTextChanged", function(self, userInput)
+        if userInput then
+            local text = self:GetText()
+            if text:sub(1,2) == "::" or text:sub(1,1) == "/" then
+                if not ns.quickReplyPopup then buildQuickReplyPopup(cp) end
+                ns.quickReplyPopup:Update()
+                ns.quickReplyPopup:Show()
+            elseif ns.quickReplyPopup then
+                ns.quickReplyPopup:Hide()
+            end
+        end
+    end)
 
     ns.sendBtn:SetScript("OnClick", doSend)
     ns.inputBox:SetScript("OnEnterPressed", doSend)

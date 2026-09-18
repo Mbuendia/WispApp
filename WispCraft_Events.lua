@@ -23,6 +23,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         local name = ...
         if name == "WispCraft" then
             if ns.initSettings then ns.initSettings() end
+            if ns.initTemplates then ns.initTemplates() end
             ns.buildUI()
             ns.buildMinimapButton()
             if WispCraftDB.settings and WispCraftDB.settings.startPeeked then

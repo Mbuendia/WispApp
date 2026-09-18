@@ -35,5 +35,12 @@ SlashCmdList["WispCraft"] = function(msg)
                 if ns.peekBar then ns.peekBar:Hide() end
             end
         end
-    end
 end
+end
+
+hooksecurefunc("ChatEdit_InsertLink", function(text)
+    if ns.inputBox and ns.inputBox:IsVisible() and ns.inputBox:HasFocus() then
+        ns.inputBox:Insert(text)
+        return true
+    end
+end)
