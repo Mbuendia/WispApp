@@ -1,8 +1,8 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft v1.1 — Entry Point & Slash Commands
---  WoW Forever / Midnight · Build 12.1.0 (120100)
+--  WispCraft v1.1 â€” Entry Point & Slash Commands
+--  WoW Forever / Midnight Â· Build 12.1.0 (120100)
 -- ============================================================
 
 SLASH_WispCraft1 = "/WispCraft"
@@ -44,3 +44,4 @@ hooksecurefunc("ChatEdit_InsertLink", function(text)
         return true
     end
 end)
+

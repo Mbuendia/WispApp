@@ -16,15 +16,14 @@ function ns.doShake()
     
     if not ns.mmShakeAnim then
         ns.mmShakeAnim = mmBtn:CreateAnimationGroup()
-        local scale1 = ns.mmShakeAnim:CreateAnimation("Scale")
-        scale1:SetScale(1.2, 1.2)
-        scale1:SetDuration(0.1)
-        scale1:SetOrder(1)
-        
-        local scale2 = ns.mmShakeAnim:CreateAnimation("Scale")
-        scale2:SetScale(1/1.2, 1/1.2)
-        scale2:SetDuration(0.1)
-        scale2:SetOrder(2)
+        local a1 = ns.mmShakeAnim:CreateAnimation("Translation")
+        a1:SetOffset(4, 0); a1:SetDuration(0.05); a1:SetOrder(1)
+        local a2 = ns.mmShakeAnim:CreateAnimation("Translation")
+        a2:SetOffset(-8, 0); a2:SetDuration(0.05); a2:SetOrder(2)
+        local a3 = ns.mmShakeAnim:CreateAnimation("Translation")
+        a3:SetOffset(8, 0); a3:SetDuration(0.05); a3:SetOrder(3)
+        local a4 = ns.mmShakeAnim:CreateAnimation("Translation")
+        a4:SetOffset(-4, 0); a4:SetDuration(0.05); a4:SetOrder(4)
     end
     if not ns.mmShakeAnim:IsPlaying() then
         ns.mmShakeAnim:Play()
@@ -120,4 +119,6 @@ function ns.buildMinimapButton()
     end)
     mmBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
+
+
 

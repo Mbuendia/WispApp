@@ -156,7 +156,7 @@ function ns.updateContactList()
         local c = ns.convos[name]
         local last = c[#c]
         if last then
-            r.pT:SetText((last.out and "TÃº: " or "")..last.msg)
+            r.pT:SetText((last.out and "Tu: " or "")..last.msg)
             r.tsT:SetText(last.ts)
         end
 
@@ -196,14 +196,14 @@ function ns.selectContact(name)
         ns.hdrStatus:SetText("â›” DND")
         ns.hdrStatus:SetTextColor(1, 0.26, 0.26) -- #ff4444
     elseif ns.wispPeers[name] then
-        ns.hdrStatus:SetText("en lÃ­nea")
+        ns.hdrStatus:SetText("en linea")
         ns.hdrStatus:SetTextColor(0.325, 0.741, 0.922) -- #53bdeb
         if ns.sendP2P then
             ns.sendP2P(name, "HELLO")
             ns.sendP2P(name, "READ")
         end
     else
-        ns.hdrStatus:SetText("en lÃ­nea")
+        ns.hdrStatus:SetText("en linea")
         ns.hdrStatus:SetTextColor(0.145, 0.855, 0.561) -- #25d366
         if ns.sendP2P then ns.sendP2P(name, "HELLO") end
     end
@@ -328,6 +328,8 @@ end
 function ns.buildUI()
     -- Phone Shell
     local pf = CreateFrame("Frame", "WispCraftPhone", UIParent)
+    pf:SetMovable(true)
+    pf:SetClampedToScreen(true)
     ns.phoneFrame = pf
     pf:SetSize(ns.PW, ns.PH)
     pf:SetPoint("CENTER")
@@ -414,6 +416,10 @@ function ns.buildUI()
 
     -- Header
     local ch = CreateFrame("Frame", nil, cp)
+    ch:EnableMouse(true)
+    ch:RegisterForDrag("LeftButton")
+    ch:SetScript("OnDragStart", function() pf:StartMoving() end)
+    ch:SetScript("OnDragStop", function() pf:StopMovingOrSizing() end)
     ch:SetHeight(ns.HH)
     ch:SetPoint("TOPLEFT")
     ch:SetPoint("TOPRIGHT")
@@ -432,7 +438,7 @@ function ns.buildUI()
 
     ns.headerName = ch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.headerName:SetPoint("TOPLEFT", hA, "TOPRIGHT", 8, -4)
-    ns.headerName:SetText("NingÃºn Wisp")
+    ns.headerName:SetText("Ningun Wisp")
 
     ns.hdrStatus = ch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.hdrStatus:SetPoint("BOTTOMLEFT", hA, "BOTTOMRIGHT", 8, 4)
@@ -598,6 +604,7 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
 
 
 

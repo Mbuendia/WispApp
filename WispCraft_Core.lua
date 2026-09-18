@@ -249,3 +249,4 @@ function ns.measureW(text, maxW)
     return math.min(_mT:GetStringWidth() + ns.BPAD*2 + 6, maxW)
 end
 
+

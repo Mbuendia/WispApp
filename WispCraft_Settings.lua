@@ -1,7 +1,7 @@
-local ADDON_NAME, ns = ...
+﻿local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispCraft Settings — Config UI (v1.2)
+--  WispCraft Settings â€” Config UI (v1.2)
 -- ============================================================
 
 function ns.initSettings()
@@ -49,6 +49,9 @@ local function buildConfigFrame()
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
     f:SetFrameStrata("DIALOG")
+    local bg = f:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints()
+    bg:SetColorTexture(0.05, 0.05, 0.07, 0.95)
     f:Hide()
     
     f.TitleText:SetText("WispCraft Settings")
@@ -62,7 +65,7 @@ local function buildConfigFrame()
     -- Templates Section
     local tl = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     tl:SetPoint("TOPLEFT", 20, -190)
-    tl:SetText("Plantillas de respuesta rápida (:: o /)")
+    tl:SetText("Plantillas de respuesta rÃ¡pida (:: o /)")
 
     f.templateRows = {}
     
@@ -137,3 +140,5 @@ function ns.toggleConfig()
         ns.configFrame:Show()
     end
 end
+
+
