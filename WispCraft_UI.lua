@@ -142,6 +142,7 @@ local function buildContactRow(idx)
 end
 
 function ns.updateContactList()
+    if not ns.contactRows then ns.contactRows = {} end
     for i, name in ipairs(ns.contacts) do
         local r = ns.contactRows[i] or buildContactRow(i)
         r.f:Show()
