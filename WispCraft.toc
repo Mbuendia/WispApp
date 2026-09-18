@@ -2,7 +2,7 @@
 ## Title: WispCraft
 ## Notes: WhatsApp-style whisper interface.
 ## Author: WispCraft Team
-## Version: 1.1.0
+## Version: 1.6.0
 ## SavedVariables: WispCraftDB
 
 WispCraft_Core.lua
