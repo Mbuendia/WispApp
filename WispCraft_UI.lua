@@ -209,7 +209,7 @@ function ns.selectContact(idx)
     end
     
     ns.hdrAvatarLetter:SetText(name:sub(1,1):upper())
-    ns.hdrAvatarLetter:GetParent():SetColorTexture(ns.avatarColor(name))
+    if ns.hdrAvatarBG then ns.hdrAvatarBG:SetColorTexture(ns.avatarColor(name)) end
     
     ns.inputBox:Enable(); ns.sendBtn:Enable()
     ns.noConvLabel:Hide()
@@ -422,6 +422,7 @@ function ns.buildUI()
     cClose:SetScript("OnClick", function() ns.setPeekMode(true) end) -- v1.1 close goes to peek
 
     local hA = ch:CreateTexture(nil, "ARTWORK")
+    ns.hdrAvatarBG = hA
     hA:SetSize(36,36); hA:SetPoint("LEFT", 10, 0); hA:SetColorTexture(0.2,0.3,0.2)
     ns.hdrAvatarLetter = ch:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     ns.hdrAvatarLetter:SetPoint("CENTER", hA, "CENTER")
