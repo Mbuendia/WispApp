@@ -51,7 +51,7 @@ local function buildConfigFrame()
     f:SetFrameStrata("DIALOG")
     local bg = f:CreateTexture(nil, "BACKGROUND")
     bg:SetAllPoints()
-    bg:SetColorTexture(0.05, 0.05, 0.07, 0.95)
+    bg:SetColorTexture(ns.U(ns.C.phone, 0.85)); f:SetFrameLevel(100)
     f:Hide()
     
     f.TitleText:SetText("WispCraft Settings")
@@ -140,5 +140,6 @@ function ns.toggleConfig()
         ns.configFrame:Show()
     end
 end
+
 
 

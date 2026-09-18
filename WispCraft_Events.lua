@@ -25,6 +25,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local name = ...
         if name == "WispCraft" then
+            if ns.initFactionTheme then ns.initFactionTheme() end
             C_ChatInfo.RegisterAddonMessagePrefix("WISPCRAFT")
             if ns.initSettings then ns.initSettings() end
             if ns.initTemplates then ns.initTemplates() end
@@ -136,4 +137,5 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         ns.setContactStatus(name, status)
     end
 end)
+
 

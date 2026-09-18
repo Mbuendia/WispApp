@@ -32,7 +32,46 @@ local function newBubble(m, lastY)
     local w = ns.measureW(text, ns.BMAX)
     local h = ns.measureH(text, w) + 18
 
-    local b = CreateFrame("Frame", nil, ns.contentFrame)
+    local b = CreateFrame("Button", nil, ns.contentFrame)
+    b.rawText = text
+    b:SetScript("OnClick", function(self)
+        local t = self.rawText
+        if t:match("wowhead%.com") then
+            local url = t:match("(https?://[%w_.~!*:@&+$/?%%#-]+)")
+            if url then
+                local dialog = StaticPopup_Show("WISPCRAFT_COPY_URL")
+                if dialog then dialog.data = url end
+            end
+        elseif t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]") then
+            local zone, x, y = t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]")
+            if SlashCmdList["TOMTOM_WAY"] then
+                SlashCmdList["TOMTOM_WAY"](string.format("%s %s %s", zone, x, y))
+            else
+                print("|cff53bdeb[WispCraft]|r TomTom no esta instalado. Coordenadas: " .. zone .. " " .. x .. " " .. y)
+            end
+        end
+    end)
+    
+    -- Animations
+    b.anim = b:CreateAnimationGroup()
+    local slide = b.anim:CreateAnimation("Translation")
+    slide:SetOffset(0, 15)
+    slide:SetDuration(0)
+    slide:SetOrder(1)
+    
+    local slideIn = b.anim:CreateAnimation("Translation")
+    slideIn:SetOffset(0, -15)
+    slideIn:SetSmoothing("OUT")
+    slideIn:SetDuration(0.2)
+    slideIn:SetOrder(2)
+    
+    local fade = b.anim:CreateAnimation("Alpha")
+    fade:SetFromAlpha(0)
+    fade:SetToAlpha(1)
+    fade:SetDuration(0.2)
+    fade:SetOrder(2)
+    
+    b.anim:Play()
     b:SetSize(w, h)
     b:SetPoint("TOP", ns.contentFrame, "TOP", 0, lastY)
     if isOut then b:SetPoint("RIGHT", -ns.BPAD, 0)
@@ -222,6 +261,24 @@ end
 -- CONTEXT MENU
 --------------------------------------------------------------------------------
 
+StaticPopupDialogs["WISPCRAFT_COPY_URL"] = {
+    text = "Copiar enlace (Ctrl+C):",
+    button1 = "Cerrar",
+    hasEditBox = true,
+    OnShow = function(self)
+        local eb = self.editBox or self.EditBox
+        eb:SetText(self.data or "")
+        eb:HighlightText()
+        eb:SetFocus()
+    end,
+    EditBoxOnEscapePressed = function(self)
+        self:GetParent():Hide()
+    end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+}
+
 StaticPopupDialogs["WISPCRAFT_EDIT_NOTE"] = {
     text = "Editar nota para %s:",
     button1 = ACCEPT,
@@ -381,7 +438,7 @@ function ns.buildUI()
     
     local pbT = pb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     pbT:SetPoint("LEFT", 14, 0)
-    pbT:SetText("|cff25d366Wisp|r|cffffffffApp|r")
+    pbT:SetText("|cff25d366Wisp|r|cffffffffCraft|r")
     ns.peekBadgeText = pbT
 
     pb:SetScript("OnClick", function() ns.setPeekMode(false) end)
@@ -401,7 +458,7 @@ function ns.buildUI()
     sh:SetPoint("TOPRIGHT")
     ns.BG(sh, ns.C.hdrDark)
     local st = sh:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    st:SetPoint("CENTER", 0, 5); st:SetText("|cff25d366Wisp|r|cffffffffApp|r")
+    st:SetPoint("CENTER", 0, 5); st:SetText("|cff25d366Wisp|r|cffffffffCraft|r")
 
     ns.contactListFrame = CreateFrame("Frame", nil, sd)
     ns.contactListFrame:SetPoint("TOPLEFT", sh, "BOTTOMLEFT")
@@ -467,7 +524,21 @@ function ns.buildUI()
     ns.BG(ia, ns.C.inputBG)
 
     ns.inputBox = CreateFrame("EditBox", nil, ia, "InputBoxTemplate")
-    ns.inputBox:SetPoint("LEFT", 15, 0); ns.inputBox:SetPoint("RIGHT", -45, 0)
+        local locBtn = CreateFrame("Button", nil, ia)
+    locBtn:SetSize(32, 32)
+    locBtn:SetPoint("LEFT", 5, 0)
+    local locTx = locBtn:CreateFontString(nil, "OVERLAY")
+    locTx:SetFont("Fonts\\FRIZQT__.TTF", 16)
+    locTx:SetPoint("CENTER")
+    locTx:Hide(); local locTex = locBtn:CreateTexture(nil, "ARTWORK"); locTex:SetAllPoints(); locTex:SetTexture("Interface\\\\Icons\\\\INV_Misc_Map02")
+    locBtn:SetScript("OnClick", function()
+        if ns.active then
+            local loc = ns.shareLocation()
+            ns.inputBox:Insert(loc .. " ")
+            ns.inputBox:SetFocus()
+        end
+    end)
+    ns.inputBox:SetPoint("LEFT", 40, 0); ns.inputBox:SetPoint("RIGHT", -45, 0)
     ns.inputBox:SetHeight(32); ns.inputBox:SetAutoFocus(false)
     ns.inputBox:SetFontObject("ChatFontNormal")
     ns.inputBox:Disable()
@@ -475,8 +546,10 @@ function ns.buildUI()
     ns.sendBtn = CreateFrame("Button", nil, ia)
     ns.sendBtn:SetSize(32,32); ns.sendBtn:SetPoint("RIGHT", -8, 0)
     ns.BG(ns.sendBtn, ns.C.hdr)
-    local sTx = ns.sendBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    sTx:SetPoint("CENTER"); sTx:SetText(">")
+    local sTx = ns.sendBtn:CreateTexture(nil, "ARTWORK")
+    sTx:SetSize(16,16)
+    sTx:SetPoint("CENTER")
+    sTx:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
     ns.sendBtn:Disable()
 
     -- Resize Handle
@@ -604,6 +677,14 @@ function ns.setPeekMode(enable)
     end
     oldSetPeekMode(enable)
 end
+
+
+
+
+
+
+
+
 
 
 

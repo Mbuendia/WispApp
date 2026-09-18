@@ -40,6 +40,38 @@ ns.C = {
     red      = {0.800, 0.100, 0.100},
 }
 
+--------------------------------------------------------------------------------
+-- DYNAMIC THEME (FACTION BASED)
+--------------------------------------------------------------------------------
+function ns.initFactionTheme()
+    local faction = UnitFactionGroup("player")
+    if faction == "Horde" then
+        -- Official Horde Red but dark enough for white text accessibility
+        ns.C.screen   = {0.08, 0.08, 0.08}
+        ns.C.phone    = {0.05, 0.05, 0.05}
+        ns.C.hdr      = {0.55, 0.09, 0.09} -- #8C1616 Horde Red
+        ns.C.hdrDark  = {0.40, 0.06, 0.06}
+        ns.C.bOut     = {0.40, 0.06, 0.06} -- Red outgoing bubbles
+        ns.C.bIn      = {0.15, 0.15, 0.15}
+        ns.C.sidebar  = {0.06, 0.06, 0.06}
+        ns.C.sidHov   = {0.15, 0.05, 0.05}
+        ns.C.sidSel   = {0.25, 0.05, 0.05}
+        ns.C.accent   = {0.90, 0.10, 0.10}
+    else
+        -- Official Alliance Blue but dark enough for white text accessibility
+        ns.C.screen   = {0.05, 0.07, 0.10}
+        ns.C.phone    = {0.03, 0.04, 0.06}
+        ns.C.hdr      = {0.00, 0.29, 0.58} -- #004a93 Alliance Blue
+        ns.C.hdrDark  = {0.00, 0.16, 0.35}
+        ns.C.bOut     = {0.00, 0.29, 0.58} -- Blue outgoing bubbles
+        ns.C.bIn      = {0.10, 0.14, 0.20}
+        ns.C.sidebar  = {0.04, 0.05, 0.07}
+        ns.C.sidHov   = {0.00, 0.15, 0.30}
+        ns.C.sidSel   = {0.00, 0.20, 0.45}
+        ns.C.accent   = {0.94, 0.76, 0.05} -- Gold
+    end
+end
+
 function ns.U(t, a) return t[1], t[2], t[3], a or 1 end
 
 function ns.BG(f, t, a)
@@ -232,6 +264,25 @@ function ns.getTotalUnread()
 end
 
 --------------------------------------------------------------------------------
+-- GPS & PARSING HELPERS
+--------------------------------------------------------------------------------
+function ns.shareLocation()
+    if C_Map and C_Map.GetBestMapForUnit then
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if mapID then
+            local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+            local info = C_Map.GetMapInfo(mapID)
+            if pos and info then
+                local x = math.floor(pos.x * 10000) / 100
+                local y = math.floor(pos.y * 10000) / 100
+                return string.format("[GPS: %s %s %s]", info.name, x, y)
+            end
+        end
+    end
+    return "[GPS: Ubicacion desconocida]"
+end
+
+--------------------------------------------------------------------------------
 -- TEXT MEASUREMENT HELPER
 --------------------------------------------------------------------------------
 local _mF = CreateFrame("Frame", nil, UIParent)
@@ -248,5 +299,6 @@ function ns.measureW(text, maxW)
     _mT:SetWidth(maxW - ns.BPAD*2); _mT:SetText(text)
     return math.min(_mT:GetStringWidth() + ns.BPAD*2 + 6, maxW)
 end
+
 
 

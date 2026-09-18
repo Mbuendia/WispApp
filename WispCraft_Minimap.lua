@@ -42,9 +42,9 @@ function ns.updateMinimapBadge()
     -- Also update peek bar if in peek mode
     if ns.peekMode and ns.peekBadgeText then
         if total > 0 then
-            ns.peekBadgeText:SetText("|cff25d366Wisp|r|cffffffffApp|r  |cffff4444" .. total .. "|r")
+            ns.peekBadgeText:SetText("|cff25d366Wisp|r|cffffffffCraft|r  |cffff4444" .. total .. "|r")
         else
-            ns.peekBadgeText:SetText("|cff25d366Wisp|r|cffffffffApp|r")
+            ns.peekBadgeText:SetText("|cff25d366Wisp|r|cffffffffCraft|r")
         end
     end
 end
@@ -61,8 +61,7 @@ function ns.buildMinimapButton()
     local iconBG = mmBtn:CreateTexture(nil, "BACKGROUND")
     iconBG:SetAllPoints(); iconBG:SetColorTexture(ns.U(ns.C.hdr))
 
-    local iconTxt = mmBtn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    iconTxt:SetAllPoints(); iconTxt:SetText("W")
+    local iconTex = mmBtn:CreateTexture(nil, "ARTWORK")`n    iconTex:SetAllPoints()`n    iconTex:SetTexture("Interface\\Icons\\UI_Chat")
 
     -- Position on minimap edge
     local angle = math.rad(220)
@@ -119,6 +118,8 @@ function ns.buildMinimapButton()
     end)
     mmBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
+
+
 
 
 
