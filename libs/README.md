@@ -1,27 +1,27 @@
-ï»¿# libs/
+# libs/
 
-Esta carpeta es para librerÃ­as externas de WoW addon development.
+Esta carpeta es para librerías externas de WoW addon development.
 
-## LibrerÃ­as recomendadas para WispChat v2+
+## Librerías recomendadas para WispCraft v2+
 
-| LibrerÃ­a | URL | Uso |
+| Librería | URL | Uso |
 |---|---|---|
-| **LibStub** | https://www.curseforge.com/wow/addons/libstub | Base para registrar librerÃ­as |
+| **LibStub** | https://www.curseforge.com/wow/addons/libstub | Base para registrar librerías |
 | **AceDB-3.0** | https://www.wowace.com/projects/ace3 | SavedVariables avanzado con perfiles por personaje |
-| **LibDBIcon-1.0** | https://www.curseforge.com/wow/addons/libdbicon-1-0 | BotÃ³n de minimapa profesional (reemplaza el actual) |
-| **AceLocale-3.0** | https://www.wowace.com/projects/ace3 | LocalizaciÃ³n (ES, EN, DE, FR...) |
+| **LibDBIcon-1.0** | https://www.curseforge.com/wow/addons/libdbicon-1-0 | Botón de minimapa profesional (reemplaza el actual) |
+| **AceLocale-3.0** | https://www.wowace.com/projects/ace3 | Localización (ES, EN, DE, FR...) |
 
-## CÃ³mo aÃ±adir una librerÃ­a
+## Cómo añadir una librería
 
-1. Descarga la librerÃ­a y coloca su carpeta aquÃ­: `libs/NombreLib/`
-2. AÃ±ade su archivo `.lua` en `WispChat.toc` ANTES de `WispChat.lua`:
+1. Descarga la librería y coloca su carpeta aquí: `libs/NombreLib/`
+2. Añade su archivo `.lua` en `WispCraft.toc` ANTES de `WispCraft.lua`:
 
 ```toc
 ## Interface: 120100
-## Title: WispChat
-## SavedVariables: WispChatDB
+## Title: WispCraft
+## SavedVariables: WispCraftDB
 
 libs/LibStub/LibStub.lua
 libs/AceDB-3.0/AceDB-3.0.lua
-WispChat.lua
+WispCraft.lua
 ```

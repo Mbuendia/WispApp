@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispChat Core — State, Constants, Theme & Helpers
+--  WispCraft Core — State, Constants, Theme & Helpers
 --  WoW Forever / Midnight · Build 12.1.0 (120100)
 -- ============================================================
 
@@ -51,7 +51,7 @@ end
 --------------------------------------------------------------------------------
 -- SAVED STATE
 --------------------------------------------------------------------------------
-WispChatDB = WispChatDB or {}
+WispCraftDB = WispCraftDB or {}
 
 ns.convos      = {}
 ns.unread      = {}

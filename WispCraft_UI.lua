@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispChat UI — Main Window, Sidebar, Bubbles & Peek (v1.1)
+--  WispCraft UI — Main Window, Sidebar, Bubbles & Peek (v1.1)
 --  WoW Forever / Midnight · Build 12.1.0 (120100)
 -- ============================================================
 
@@ -159,7 +159,7 @@ end
 --------------------------------------------------------------------------------
 function ns.buildUI()
     -- Phone Shell
-    local pf = CreateFrame("Frame", "WispChatPhone", UIParent)
+    local pf = CreateFrame("Frame", "WispCraftPhone", UIParent)
     ns.phoneFrame = pf
     pf:SetSize(ns.PW, ns.PH)
     pf:SetPoint("CENTER")
@@ -177,10 +177,10 @@ function ns.buildUI()
     sb:SetPoint("TOP")
     ns.BG(sb, ns.C.topbar)
     local sbt = sb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    sbt:SetPoint("LEFT", 10, 0); sbt:SetText("WispApp v1.1"); sbt:SetFont("Fonts\\FRIZQT__.TTF", 9)
+    sbt:SetPoint("LEFT", 10, 0); sbt:SetText("WispCraft v1.1"); sbt:SetFont("Fonts\\FRIZQT__.TTF", 9)
 
     -- Peek Bar (v1.1)
-    local pb = CreateFrame("Button", "WispChatPeekBar", UIParent)
+    local pb = CreateFrame("Button", "WispCraftPeekBar", UIParent)
     ns.peekBar = pb
     pb:SetSize(ns.PW, ns.HH)
     pb:SetPoint("BOTTOM", UIParent, "BOTTOM", 0, 150)
@@ -250,7 +250,7 @@ function ns.buildUI()
     ns.hdrStatus:SetText("selecciona un contacto")
 
     -- Scroll
-    ns.scrollFrame = CreateFrame("ScrollFrame", "WispChatScroll", cp, "UIPanelScrollFrameTemplate")
+    ns.scrollFrame = CreateFrame("ScrollFrame", "WispCraftScroll", cp, "UIPanelScrollFrameTemplate")
     ns.scrollFrame:SetPoint("TOPLEFT", ch, "BOTTOMLEFT", 0, -5)
     ns.scrollFrame:SetPoint("BOTTOMRIGHT", 0, ns.IH + 5)
     

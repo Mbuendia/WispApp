@@ -1,25 +1,25 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispChat v1.1 — Entry Point & Slash Commands
+--  WispCraft v1.1 — Entry Point & Slash Commands
 --  WoW Forever / Midnight · Build 12.1.0 (120100)
 -- ============================================================
 
-SLASH_WISPCHAT1 = "/wispchat"
-SLASH_WISPCHAT2 = "/wc"
-SlashCmdList["WISPCHAT"] = function(msg)
+SLASH_WispCraft1 = "/WispCraft"
+SLASH_WispCraft2 = "/wc"
+SlashCmdList["WispCraft"] = function(msg)
     if msg == "reset" then
-        WispChatDB = {}
+        WispCraftDB = {}
         ReloadUI()
     elseif msg == "combat on" then
-        if WispChatDB.settings then
-            WispChatDB.settings.hideInCombat = true
-            print("|cff25d366WispChat:|r Auto-ocultar en combate ACTIVADO.")
+        if WispCraftDB.settings then
+            WispCraftDB.settings.hideInCombat = true
+            print("|cff25d366WispCraft:|r Auto-ocultar en combate ACTIVADO.")
         end
     elseif msg == "combat off" then
-        if WispChatDB.settings then
-            WispChatDB.settings.hideInCombat = false
-            print("|cff25d366WispChat:|r Auto-ocultar en combate DESACTIVADO.")
+        if WispCraftDB.settings then
+            WispCraftDB.settings.hideInCombat = false
+            print("|cff25d366WispCraft:|r Auto-ocultar en combate DESACTIVADO.")
         end
     else
         if ns.phoneFrame then

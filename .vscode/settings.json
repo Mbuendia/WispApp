@@ -1,4 +1,4 @@
-﻿{
+{
   "editor.tabSize": 4,
   "editor.insertSpaces": true,
   "editor.rulers": [100],
@@ -9,10 +9,10 @@
     "SendChatMessage", "PlaySound", "SOUNDKIT",
     "GameFontNormal", "GameFontNormalLarge", "GameFontNormalSmall",
     "GameTooltip", "UnitName", "GetBuildInfo",
-    "SlashCmdList", "SLASH_WISPCHAT1", "SLASH_WISPCHAT2",
+    "SlashCmdList", "SLASH_WispCraft1", "SLASH_WispCraft2",
     "C_Timer", "date", "wipe", "math",
     "BackdropTemplate", "UIPanelScrollFrameTemplate", "InputBoxTemplate",
-    "WispChatDB"
+    "WispCraftDB"
   ],
   "Lua.runtime.version": "Lua 5.1",
   "Lua.workspace.library": [],

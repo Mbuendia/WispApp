@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispChat Minimap — Button + Badge (v1.1)
+--  WispCraft Minimap — Button + Badge (v1.1)
 --  WoW Forever / Midnight · Build 12.1.0 (120100)
 -- ============================================================
 
@@ -33,7 +33,7 @@ end
 -- BUILD MINIMAP BUTTON
 --------------------------------------------------------------------------------
 function ns.buildMinimapButton()
-    mmBtn = CreateFrame("Button", "WispChatMMButton", Minimap)
+    mmBtn = CreateFrame("Button", "WispCraftMMButton", Minimap)
     mmBtn:SetSize(26, 26)
     mmBtn:SetFrameStrata("MEDIUM")
     mmBtn:SetFrameLevel(8)
@@ -89,7 +89,7 @@ function ns.buildMinimapButton()
     -- Tooltip
     mmBtn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-        GameTooltip:AddLine("|cff25d366WispApp|r")
+        GameTooltip:AddLine("|cff25d366WispCraft|r")
         GameTooltip:AddLine("Clic para abrir/cerrar", 0.8, 0.8, 0.8)
         local total = ns.getTotalUnread()
         if total > 0 then

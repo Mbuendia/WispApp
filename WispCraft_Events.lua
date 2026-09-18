@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 
 -- ============================================================
---  WispChat Events — Listeners for Whispers & Combat (v1.1)
+--  WispCraft Events — Listeners for Whispers & Combat (v1.1)
 --  WoW Forever / Midnight · Build 12.1.0 (120100)
 -- ============================================================
 
@@ -17,11 +17,11 @@ eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "ADDON_LOADED" then
         local name = ...
-        if name == "WispChat" then
+        if name == "WispCraft" then
             if ns.initSettings then ns.initSettings() end
             ns.buildUI()
             ns.buildMinimapButton()
-            print("|cff25d366WispChat v1.1|r loaded. Type /wc to open or /wc combat to toggle combat auto-hide.")
+            print("|cff25d366WispCraft v1.1|r loaded. Type /wc to open or /wc combat to toggle combat auto-hide.")
         end
 
     elseif event == "CHAT_MSG_WHISPER" then
@@ -56,7 +56,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PLAYER_REGEN_DISABLED" then
         -- Entering combat
-        if WispChatDB.settings and WispChatDB.settings.hideInCombat then
+        if WispCraftDB.settings and WispCraftDB.settings.hideInCombat then
             ns.wasVisible = ns.phoneFrame and ns.phoneFrame:IsShown() and not ns.peekMode
             if ns.wasVisible then
                 ns.setPeekMode(true)
@@ -65,7 +65,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PLAYER_REGEN_ENABLED" then
         -- Leaving combat
-        if WispChatDB.settings and WispChatDB.settings.hideInCombat then
+        if WispCraftDB.settings and WispCraftDB.settings.hideInCombat then
             if ns.wasVisible then
                 ns.setPeekMode(false)
                 ns.wasVisible = false
