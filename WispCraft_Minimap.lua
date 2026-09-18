@@ -61,7 +61,9 @@ function ns.buildMinimapButton()
     local iconBG = mmBtn:CreateTexture(nil, "BACKGROUND")
     iconBG:SetAllPoints(); iconBG:SetColorTexture(ns.U(ns.C.hdr))
 
-    local iconTex = mmBtn:CreateTexture(nil, "ARTWORK")`n    iconTex:SetAllPoints()`n    iconTex:SetTexture("Interface\\Icons\\UI_Chat")
+    local iconTex = mmBtn:CreateTexture(nil, "ARTWORK")
+    iconTex:SetAllPoints()
+    iconTex:SetTexture("Interface\\Icons\\UI_Chat")
 
     -- Position on minimap edge
     local angle = math.rad(220)
@@ -118,6 +120,8 @@ function ns.buildMinimapButton()
     end)
     mmBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
+
+
 
 
 
