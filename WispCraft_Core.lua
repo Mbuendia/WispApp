@@ -273,9 +273,13 @@ function ns.shareLocation()
             local pos = C_Map.GetPlayerMapPosition(mapID, "player")
             local info = C_Map.GetMapInfo(mapID)
             if pos and info then
-                local x = math.floor(pos.x * 10000) / 100
-                local y = math.floor(pos.y * 10000) / 100
-                return string.format("[GPS:%d:%s:%s] %s", mapID, x, y, info.name)
+                local x = math.floor(pos.x * 10000)
+                local y = math.floor(pos.y * 10000)
+                if C_Map.GetMapLink then
+                    return C_Map.GetMapLink(mapID, pos.x, pos.y)
+                else
+                    return string.format("[GPS:%d:%s:%s] %s", mapID, x/100, y/100, info.name)
+                end
             end
         end
     end

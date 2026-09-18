@@ -1,4 +1,4 @@
-﻿local ADDON_NAME, ns = ...
+local ADDON_NAME, ns = ...
 
 -- ============================================================
 --  WispCraft Minimap â€” Button + Badge (v1.1)
@@ -65,27 +65,44 @@ end
 --------------------------------------------------------------------------------
 function ns.buildMinimapButton()
     mmBtn = CreateFrame("Button", "WispCraftMMButton", Minimap)
-    mmBtn:SetSize(26, 26)
+    mmBtn:SetSize(32, 32)
     mmBtn:SetFrameStrata("MEDIUM")
     mmBtn:SetFrameLevel(8)
 
-    local iconBG = mmBtn:CreateTexture(nil, "BACKGROUND")
-    iconBG:SetAllPoints(); iconBG:SetColorTexture(ns.U(ns.C.hdr))
+    mmBtn:SetNormalTexture("Interface/Minimap/UI-Minimap-Background")
+    mmBtn:GetNormalTexture():SetSize(20, 20)
+    mmBtn:GetNormalTexture():SetPoint("CENTER")
 
-    local iconTex = mmBtn:CreateTexture(nil, "ARTWORK")
-    iconTex:SetAllPoints()
-    iconTex:SetTexture("Interface\Icons\INV_Letter_15")
+    local iconTx = mmBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    iconTx:SetPoint("CENTER", 0, 1)
+    iconTx:SetText("W")
+    ns.minimapIconText = iconTx
+
+    local border = mmBtn:CreateTexture(nil, "OVERLAY")
+    border:SetTexture("Interface/Minimap/MiniMap-TrackingBorder")
+    border:SetSize(54, 54)
+    border:SetPoint("TOPLEFT")
+
+    if mmBtn.CreateAnimationGroup then
+        ns.minimapAnim = mmBtn:CreateAnimationGroup()
+        ns.minimapAnim:SetLooping("REPEAT")
+        local alpha = ns.minimapAnim:CreateAnimation("Alpha")
+        alpha:SetFromAlpha(1)
+        alpha:SetToAlpha(0.2)
+        alpha:SetDuration(0.6)
+        alpha:SetSmoothing("IN_OUT")
+    end
 
     -- Position on minimap edge
     local angle = math.rad(220)
-    local radius = 82
+    local radius = 80
     mmBtn:SetPoint("CENTER", Minimap, "CENTER",
         math.cos(angle) * radius, math.sin(angle) * radius)
 
     -- Badge (red circle with unread count)
     mmBadge = CreateFrame("Frame", nil, mmBtn)
     mmBadge:SetSize(16, 16)
-    mmBadge:SetPoint("TOPRIGHT", mmBtn, "TOPRIGHT", 4, 4)
+    mmBadge:SetPoint("TOPRIGHT", mmBtn, "TOPRIGHT", 0, 0)
     mmBadge:SetFrameLevel(mmBtn:GetFrameLevel() + 1)
 
     local badgeBG = mmBadge:CreateTexture(nil, "BACKGROUND")
@@ -104,13 +121,10 @@ function ns.buildMinimapButton()
     mmBtn:SetScript("OnClick", function()
         if ns.phoneFrame then
             if ns.peekMode then
-                -- Expand from peek
                 ns.setPeekMode(false)
             elseif ns.phoneFrame:IsShown() then
-                -- Collapse to peek
                 ns.setPeekMode(true)
             else
-                -- Show phone
                 ns.phoneFrame:Show()
                 if ns.peekBar then ns.peekBar:Hide() end
                 ns.peekMode = false

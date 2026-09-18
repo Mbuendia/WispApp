@@ -42,9 +42,15 @@ local function newBubble(m, lastY)
                 local dialog = StaticPopup_Show("WISPCRAFT_COPY_URL")
                 if dialog then dialog.data = url end
             end
-        elseif t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") or t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]") then
+        elseif t:match("|Hworldmap:(%d+):(%d+):(%d+)|h") or t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") or t:match("%[GPS: (.-) ([%d%.]+) ([%d%.]+)%]") then
             local mapID, x, y, zone
-            if t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") then
+            if t:match("|Hworldmap:(%d+):(%d+):(%d+)|h") then
+                local wMap, wX, wY = t:match("|Hworldmap:(%d+):(%d+):(%d+)|h")
+                mapID = wMap
+                x = tonumber(wX) / 100
+                y = tonumber(wY) / 100
+                zone = ""
+            elseif t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]") then
                 mapID, x, y = t:match("%[GPS:(%d+):([%d%.]+):([%d%.]+)%]")
                 zone = ""
             else
@@ -62,7 +68,7 @@ local function newBubble(m, lastY)
                 local pt = UiMapPoint.CreateFromCoordinates(tonumber(mapID), tonumber(x)/100, tonumber(y)/100)
                 C_Map.SetUserWaypoint(pt)
                 C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-                print("|cff53bdeb[WispCraft]|r Marcador de mapa anadido en " .. x .. ", " .. y)
+                print("|cff53bdeb[WispCraft]|r Marcador de mapa nativo añadido.")
             else
                 print("|cff53bdeb[WispCraft]|r Coordenadas: " .. x .. ", " .. y)
             end
@@ -207,7 +213,13 @@ function ns.updateContactList()
         local r = ns.contactRows[i] or buildContactRow(i)
         r.f:Show()
         r.bg:SetColorTexture(ns.U(ns.active==name and ns.C.sidSel or ns.C.sidebar))
-        r.av:SetColorTexture(ns.avatarColor(name))
+        local cClass = WispCraftDB.classes and WispCraftDB.classes[name]
+        if cClass and RAID_CLASS_COLORS and RAID_CLASS_COLORS[cClass] then
+            local rc = RAID_CLASS_COLORS[cClass]
+            r.av:SetColorTexture(rc.r, rc.g, rc.b)
+        else
+            r.av:SetColorTexture(ns.avatarColor(name))
+        end
         r.avT:SetText(name:sub(1,1):upper())
         
         local status = ns.contactStatus[name]
@@ -593,7 +605,7 @@ function ns.buildUI()
     local sTx = ns.sendBtn:CreateTexture(nil, "ARTWORK")
     sTx:SetSize(16,16)
     sTx:SetPoint("CENTER")
-    sTx:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+    sTx:SetTexture(130869)
     ns.sendBtn:Disable()
 
     -- Resize Handle
